@@ -1,0 +1,11 @@
+language: python
+python: 3.6
+install:
+  - pip install -r requirements.txt
+script: pytest
+branches:
+  only:
+    - master
+notifications:
+  slack:
+    secure: OYlTXe4vJaT1BnwtajVf7tegcUIv/AU8NtHRduqeRArST6GCg1K+CuH4PW8Tjb6xU2VsHMUed0UMnwuqp7iTwsbMVGj8P2JDDcUPcp8Xr4YGYoqxdNUWKsRuOqFg6i1+t8T1dPiY0CwhiJ+6BHi3jD7iQgEgFL7ixVAZ1E5MfAxq2i2HvAVEsmWn2Yfd98vsGtqTdIkZ8zroU/uuBYwJsW/8ARQK3DH4ze2CL/+FWkQAsKBsMln5PkpFM7+z5CKqy4n04M4nUa1Qk3GQwyV3aqiigso9HjtK5CYOXmAeQ5Q5kDJnGypeF6gSvoqrQVaBfXTGkWl8Iomlxnaq7g55Dtn33SeiQiwTMwoFfrOyIJe4sZuOg+yLInvoqC86CiZOwR2gxQwnD1jmk8sqsara1ndB0yeHZFsjqzKSgZlVPz3SV2p9hiaHzp2HSkmuyh3dWfLvFEk8KVEaWerkG/bkiPBYF4gi++iSyUIo/gce6D5zwiR/C71nmdChrksJrZDqtLXRYzHuh8vE+qmAnaS2pv7/XAxpY0V2qcLuTkbmlghEdRXMvBlO4Vg8pSM3aKELhMXmyTqh8nWvg3LWlH5Ymj0twarWhKCKI0UlUwLGbbPq52w9N7+cx09ANqUZCA8DfK7FSECmphk9BqqbB2u/c5LX93RU5n/vck+ITynxcI0=

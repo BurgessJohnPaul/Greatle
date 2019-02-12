@@ -21,14 +21,14 @@ def put_item_to_users(user_id):
     )
 
 
-def update_name_from_users(user_id, name):
+def update_name_from_users(user_id, users_name):
     table.update_item(
         Key={
             'user_id': user_id
         },
-        UpdateExpression='SET name = :val1',
+        UpdateExpression='SET user_name = :val1',
         ExpressionAttributeValues={
-            ':val1': name
+            ':val1': users_name
         }
     )
 

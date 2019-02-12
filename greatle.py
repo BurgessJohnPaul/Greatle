@@ -35,20 +35,15 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speech_text = "Welcome, I will know your name in a bit"
         #print("HandlerInput: ", handler_input.attributes_manager.session_attributes)
         print("HandlerInput with requestenvelope: ", handler_input.request_envelope.session.user.user_id)
 
         user_id = handler_input.request_envelope.session.user.user_id[18:]
         response = dynamo_helper.get_item_from_users(user_id)
-        # response = table.get_item(
-        #     Key={
-        #         'user_id': user_id
-        #     }
-        # )
+
         if 'Item' in response:
-            if 'name' in response['Item']:
-                speech_text = "Hello, welcome back " + response['Item']['name'] + "! How may I assist you?"
+            if 'user_name' in response['Item']:
+                speech_text = "Hello, welcome back " + response['Item']['user_name'] + "! How may I assist you?"
             else:
                 speech_text = "Hello, welcome back! How may I assist you?"
         else:
@@ -58,6 +53,20 @@ class LaunchRequestHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(
             False)
+        return handler_input.response_builder.response
+
+
+class UpdateNameIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return is_intent_name("UpdateNameIntent")(handler_input)
+
+    def handle(self, handler_input):
+        user_id = handler_input.request_envelope.session.user.user_id[18:]
+        slots = handler_input.request_envelope.request.intent.slots
+        name = slots['Name'].value
+        dynamo_helper.update_name_from_users(user_id, name)
+        speech_text = "Okay, I will call you " + name + " from now on"
+        handler_input.response_builder.speak(speech_text).set_card(SimpleCard("Hello World", speech_text)).set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -210,6 +219,7 @@ sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(FallbackIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
+sb.add_request_handler(UpdateNameIntentHandler())
 
 sb.add_exception_handler(CatchAllExceptionHandler())
 

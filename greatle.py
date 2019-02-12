@@ -4,8 +4,7 @@
 # the implementation of handler classes approach in skill builder.
 import logging
 import boto3
-import dynamo_helper
-
+from utils import dynamo_helper
 
 from ask_sdk_core.skill_builder import SkillBuilder
 from ask_sdk_core.dispatch_components import AbstractRequestHandler

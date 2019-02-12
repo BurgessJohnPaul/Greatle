@@ -12,7 +12,7 @@ before_deploy:
 deploy:
   provider: lambda
   zip: function.zip
-  function_name: greatle
+  function_name: Greatle
   region: us-east-1
   role: arn:aws:iam::803197713925:role/DeployLambdaRole
   runtime: python3.6

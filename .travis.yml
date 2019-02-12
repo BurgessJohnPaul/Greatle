@@ -16,7 +16,7 @@ deploy:
   region: us-east-1
   role: arn:aws:iam::803197713925:role/DeployLambdaRole
   runtime: python3.6
-  handler_name: handler
+  handler_name: greatle.handler
   access_key_id:
     secure: mdFoiJXrK0kSB4Iq30jAiK9EQo5Zh6VE7SmYAZsZYXrWKTzQvIrTx8piKSuf8S3ob+LPmL9ymDta/3zrA0OJownoNucrcIwh7cGirafVPVR7Mnjbud1uo/X1N2GnZyyn3rz4+Z1enzt5IfHKafZESDmtjQpEVAWLYOPlAiLQl2uOOK2r8SeCMDkUEbnxXM3FKhwBww6QyzXgb/X6A7ZDrPZ6BZuZ76q/fOVx/SR3SsoebwlAqMVHagK61NX9tzwsz304L6jSw5TAc9iNPlKX+/uamraoqlLw+ukNqnFUjML+m1liN8U2esOXaFowNIjEiE+JlB/PFM2Y8OA/lSyy2xkfXode9yO5+DFk/WTXC38Xyea1sizI3kl5u0iHZhfBiolQYzYsElej5kP82hqyxvaDW5Ib5NXLtLDov/jjpUAJRse7geBVJruZS+WaxOoQgAeHYLg1vWgRZAAyUzgWHK61LNlZLux1BAo8neSYheN5Olpg+z+XYOQXGbnoH26tTtInsafKZY7JGVZAPPyBUTJnGgTZiyZIYsP2FH6MqcEsKBuGhocUNlAqRrmbZG5Fkgfh3SQ9pzKnfced6LDTaowsPeo/pal2d4d9zxbMGkC+ZUt3LAOHL7tpgOwtJzOU3DAvezqPtVEqG86n27LFLdS9AUgyXOKJ6ku4RccPHr8=
   secret_access_key:

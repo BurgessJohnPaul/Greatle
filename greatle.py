@@ -3,6 +3,9 @@
 # This is a simple Hello World Alexa Skill, built using
 # the implementation of handler classes approach in skill builder.
 import logging
+import boto3
+import dynamo_helper
+
 
 from ask_sdk_core.skill_builder import SkillBuilder
 from ask_sdk_core.dispatch_components import AbstractRequestHandler
@@ -20,6 +23,9 @@ sb = SkillBuilder()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('Greatle_Users')
+
 
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
@@ -29,7 +35,25 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speech_text = "Welcome to the Alexa Skills Kit, you can say hello!"
+        speech_text = "Welcome, I will know your name in a bit"
+        #print("HandlerInput: ", handler_input.attributes_manager.session_attributes)
+        print("HandlerInput with requestenvelope: ", handler_input.request_envelope.session.user.user_id)
+
+        user_id = handler_input.request_envelope.session.user.user_id[18:]
+        response = dynamo_helper.get_item_from_users(user_id)
+        # response = table.get_item(
+        #     Key={
+        #         'user_id': user_id
+        #     }
+        # )
+        if 'Item' in response:
+            if 'name' in response['Item']:
+                speech_text = "Hello, welcome back " + response['Item']['name'] + "! How may I assist you?"
+            else:
+                speech_text = "Hello, welcome back! How may I assist you?"
+        else:
+            speech_text = "Hello, welcome to greatle. I am here to give you encouragement, advice, and help set and maintain goals. How may I assist you?"
+            dynamo_helper.put_item_to_users(user_id)
 
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(
@@ -45,7 +69,7 @@ class HelloWorldIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speech_text = "heck heck heck!"
+        speech_text = "what the heck!"
 
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(

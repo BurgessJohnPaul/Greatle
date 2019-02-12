@@ -104,6 +104,24 @@ class AdviceIntentHandler(AbstractRequestHandler):
             True)
         return handler_input.response_builder.response
 
+class CreateGoalIntentHandler(AbstractRequestHandler):
+    """Handler for Hello World Intent."""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("CreateGoalIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+
+        slots = handler_input.request_envelope.request.intent.slots
+        goal = slots['Goal'].value
+        speech_text = "I know you want to " + goal
+
+        handler_input.response_builder.speak(speech_text).set_card(
+            SimpleCard("Hello World", speech_text)).set_should_end_session(
+            True)
+        return handler_input.response_builder.response
+
 class HelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
     def can_handle(self, handler_input):
@@ -187,6 +205,7 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
 sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(HelloWorldIntentHandler())
 sb.add_request_handler(AdviceIntentHandler())
+sb.add_request_handler(CreateGoalIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(FallbackIntentHandler())

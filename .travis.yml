@@ -2,10 +2,29 @@ language: python
 python: 3.6
 install:
   - pip install -r requirements.txt
+before_deploy:
+  - mkdir package
+  - cd package
+  - pip install -r requirements.txt --target .
+  - zip -r9 ../function.zip .
+  - cd ../
+  - zip -g function.zip greatle.py
+deploy:
+  provider: lambda
+  zip: function.zip
+  function_name: greatle
+  region: us-east-1
+  role: arn:aws:iam::803197713925:role/DeployLambdaRole
+  runtime: python3.6
+  handler_name: handler
+  access_key_id:
+    secure: mdFoiJXrK0kSB4Iq30jAiK9EQo5Zh6VE7SmYAZsZYXrWKTzQvIrTx8piKSuf8S3ob+LPmL9ymDta/3zrA0OJownoNucrcIwh7cGirafVPVR7Mnjbud1uo/X1N2GnZyyn3rz4+Z1enzt5IfHKafZESDmtjQpEVAWLYOPlAiLQl2uOOK2r8SeCMDkUEbnxXM3FKhwBww6QyzXgb/X6A7ZDrPZ6BZuZ76q/fOVx/SR3SsoebwlAqMVHagK61NX9tzwsz304L6jSw5TAc9iNPlKX+/uamraoqlLw+ukNqnFUjML+m1liN8U2esOXaFowNIjEiE+JlB/PFM2Y8OA/lSyy2xkfXode9yO5+DFk/WTXC38Xyea1sizI3kl5u0iHZhfBiolQYzYsElej5kP82hqyxvaDW5Ib5NXLtLDov/jjpUAJRse7geBVJruZS+WaxOoQgAeHYLg1vWgRZAAyUzgWHK61LNlZLux1BAo8neSYheN5Olpg+z+XYOQXGbnoH26tTtInsafKZY7JGVZAPPyBUTJnGgTZiyZIYsP2FH6MqcEsKBuGhocUNlAqRrmbZG5Fkgfh3SQ9pzKnfced6LDTaowsPeo/pal2d4d9zxbMGkC+ZUt3LAOHL7tpgOwtJzOU3DAvezqPtVEqG86n27LFLdS9AUgyXOKJ6ku4RccPHr8=
+  secret_access_key:
+    secure: hv8U7xfnVd5MGEgL320S9whSkYGrOkQtq3TUZRVdqFrIu4F7RC39oi00Aw6nW8B8F/9g8C24vcEz/Q7lU9LLGjeVplMfy5aXmqXDOqvhFyoYF3T7SoW6aYUhhykpL7NjjGp5BsMUv+Kq1ZFR5lOvn5CRalqilXAN2IE2eHHdpfBdjseW/mvYCONZtbfmYxWQcmJugFaPgDqlsmddFxtyqoZnCuOS11/7DuVIRabaspGRmP87UhtkM5bbTDYsgnrQ7en9KNJxef3dg2fXlPg2jpEAC4EMjGxcWmO4FYL+P2yoRHEOfmnuBHX+mq3FdFA5He/EreUdtIHo0IwFLHtXBuxF2MxWChx9VfOmqfHljPod+KittjDLqbDJaGqS/IFA11MqN4XdYF5XuWkiXukDdYCdsKP9qaJfbqUYz70cTZTlKiQvmwzVtu/upAHnlDdkWn5zTiq8HfVTpAVYuFGlyuhlZuxQ5QaQAvZx/o3yloYxIHpxvpgGV8bqe5hOJ1YpNabfLM1rEbVP2IU8PjSFNcg990diMAgmHxKVsV+jQB0msEnhBXeZQ7EC3WWr/Sv4ZCVXc1s5zuk7D8Lsb47pGSWWVs1tldvnmfADztdrjb6UqVM8gmiXOc9aw4ZU1Y61kJssdQOJH3CfnfmIvkjNG7Wy1IOVEG064nC0FZj8pjo=
 script: pytest
 branches:
   only:
-    - master
+  - master
 notifications:
   slack:
     secure: OYlTXe4vJaT1BnwtajVf7tegcUIv/AU8NtHRduqeRArST6GCg1K+CuH4PW8Tjb6xU2VsHMUed0UMnwuqp7iTwsbMVGj8P2JDDcUPcp8Xr4YGYoqxdNUWKsRuOqFg6i1+t8T1dPiY0CwhiJ+6BHi3jD7iQgEgFL7ixVAZ1E5MfAxq2i2HvAVEsmWn2Yfd98vsGtqTdIkZ8zroU/uuBYwJsW/8ARQK3DH4ze2CL/+FWkQAsKBsMln5PkpFM7+z5CKqy4n04M4nUa1Qk3GQwyV3aqiigso9HjtK5CYOXmAeQ5Q5kDJnGypeF6gSvoqrQVaBfXTGkWl8Iomlxnaq7g55Dtn33SeiQiwTMwoFfrOyIJe4sZuOg+yLInvoqC86CiZOwR2gxQwnD1jmk8sqsara1ndB0yeHZFsjqzKSgZlVPz3SV2p9hiaHzp2HSkmuyh3dWfLvFEk8KVEaWerkG/bkiPBYF4gi++iSyUIo/gce6D5zwiR/C71nmdChrksJrZDqtLXRYzHuh8vE+qmAnaS2pv7/XAxpY0V2qcLuTkbmlghEdRXMvBlO4Vg8pSM3aKELhMXmyTqh8nWvg3LWlH5Ymj0twarWhKCKI0UlUwLGbbPq52w9N7+cx09ANqUZCA8DfK7FSECmphk9BqqbB2u/c5LX93RU5n/vck+ITynxcI0=

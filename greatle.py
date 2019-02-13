@@ -95,7 +95,11 @@ class AdviceIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
 
         #speech_text = "You are more capable than you imagine!"
-
+        print ("Advice called")
+        slots = handler_input.request_envelope.request.intent.slots
+        print (slots)
+        keywords = slots['AdviceTopic'].value
+        print (keywords)
         discovery = DiscoveryV1(
             version='2018-12-03',
             iam_apikey='Z5qjSJAEOoxr29_cq2AB2YhDasgd0zKkCQAEBvlTdkLf',
@@ -104,12 +108,12 @@ class AdviceIntentHandler(AbstractRequestHandler):
 
         environment_id = "a9e5ef42-6ee3-4b5b-8dbe-ea6c0fce0556"
         collection_id = "e989821f-31af-4106-9090-55d76ad26452"
-        query = discovery.query(environment_id, collection_id, natural_language_query='love', passages=True)
+        query = discovery.query(environment_id, collection_id, natural_language_query=keywords, passages=True)
         speech_text = query.get_result()["passages"][0]["passage_text"]
 
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(
-            True)
+            False)
         return handler_input.response_builder.response
 
 class CreateGoalIntentHandler(AbstractRequestHandler):
@@ -121,13 +125,43 @@ class CreateGoalIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
 
+        user_id = handler_input.request_envelope.session.user.user_id[18:]
         slots = handler_input.request_envelope.request.intent.slots
         goal = slots['Goal'].value
-        speech_text = "I know you want to " + goal
+        dynamo_helper.update_goal_from_users(user_id, goal)
+
+        speech_text = "Sure I'll remember that!"
 
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(
-            True)
+            False)
+        return handler_input.response_builder.response
+
+
+class RetrieveGoalIntentHandler(AbstractRequestHandler):
+    """Handler for Hello World Intent."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("RetrieveGoalIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+
+        user_id = handler_input.request_envelope.session.user.user_id[18:]
+        response = dynamo_helper.get_item_from_users(user_id)
+
+        if 'Item' in response:
+            if 'goal' in response['Item']:
+                speech_text = "Your goal was to " + response['Item']['goal']
+            else:
+                speech_text = "It doesn't seem like you have set any goals recently,"
+        else:
+            speech_text = "There was a terrible error"
+
+        handler_input.response_builder.speak(speech_text).set_card(
+            SimpleCard("Hello World", speech_text)).set_should_end_session(
+            False)
         return handler_input.response_builder.response
 
 class HelpIntentHandler(AbstractRequestHandler):
@@ -211,9 +245,12 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
 
 
 sb.add_request_handler(LaunchRequestHandler())
-sb.add_request_handler(HelloWorldIntentHandler())
 sb.add_request_handler(AdviceIntentHandler())
 sb.add_request_handler(CreateGoalIntentHandler())
+sb.add_request_handler(RetrieveGoalIntentHandler())
+
+sb.add_request_handler(HelloWorldIntentHandler())
+
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(FallbackIntentHandler())
@@ -221,5 +258,6 @@ sb.add_request_handler(SessionEndedRequestHandler())
 sb.add_request_handler(UpdateNameIntentHandler())
 
 sb.add_exception_handler(CatchAllExceptionHandler())
+
 
 handler = sb.lambda_handler()

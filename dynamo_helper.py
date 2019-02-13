@@ -44,3 +44,15 @@ def update_age_from_users(user_id, age):
         }
     )
 
+def update_goal_from_users(user_id, goal):
+    table.update_item(
+        Key={
+            'user_id': user_id
+        },
+        UpdateExpression='SET goal = :val1',
+        ExpressionAttributeValues={
+            ':val1': goal
+        }
+    )
+
+

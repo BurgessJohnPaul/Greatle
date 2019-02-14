@@ -124,7 +124,7 @@ class AdviceIntentHandler(AbstractRequestHandler):
         if query.get_result()['matching_results'] > 0:
             sentences = get_sentences(query.get_result()["passages"][0]["passage_text"])
             if len(sentences) != 0:
-                speech_text = sentences[0]
+                speech_text = ''.join(sentences)
             else:
                 speech_text = 'I could not find any results.'
         else:

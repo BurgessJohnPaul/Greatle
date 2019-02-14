@@ -5,6 +5,7 @@
 import logging
 import boto3
 import dynamo_helper
+import re
 
 from ask_sdk_core.skill_builder import SkillBuilder
 from ask_sdk_core.dispatch_components import AbstractRequestHandler
@@ -25,6 +26,14 @@ logger.setLevel(logging.INFO)
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('Greatle_Users')
 
+
+def get_sentences(text):
+    text = re.sub(r'<.*>', '', text)  # Get rid of html tags
+    sentences = re.split(r'(?<=[^A-Z].[.?!]) +(?=[A-Z])', text)  # Split into sentences
+    sentences = [s.replace('\n', ' ').replace('\r', '') for s in sentences]  # Remove new line and returns
+    if not sentences[0][0].isupper() and len(sentences) > 1:  # The first sentence may be a fragment so disregard
+        sentences = sentences[1:]
+    return sentences
 
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
@@ -109,7 +118,11 @@ class AdviceIntentHandler(AbstractRequestHandler):
         environment_id = "a9e5ef42-6ee3-4b5b-8dbe-ea6c0fce0556"
         collection_id = "e989821f-31af-4106-9090-55d76ad26452"
         query = discovery.query(environment_id, collection_id, natural_language_query=keywords, passages=True)
-        speech_text = query.get_result()["passages"][0]["passage_text"]
+        sentences = get_sentences(query.get_result()["passages"][0]["passage_text"])
+        if len(sentences) != 0:
+            speech_text = sentences[0]
+        else:
+            speech_text = 'I could not find any results.'
 
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(

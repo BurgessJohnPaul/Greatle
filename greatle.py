@@ -6,6 +6,7 @@ import logging
 import boto3
 import dynamo_helper
 import re
+import random
 
 from ask_sdk_core.skill_builder import SkillBuilder
 from ask_sdk_core.dispatch_components import AbstractRequestHandler
@@ -205,7 +206,30 @@ class CancelOrStopIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speech_text = "Goodbye!"
+
+
+        user_id = handler_input.request_envelope.session.user.user_id[18:]
+        response = dynamo_helper.get_item_from_users(user_id)
+
+        if 'Item' and 'user_name' in response['Item']:
+            name = response['Item']['user_name']
+            named_farewells = ["Goodbye " + name,
+                           "See you later " + name,
+                           "Bye " + name,
+                           "Farewell " + name,
+                           "Peace out " + name,
+                           "Bye bye butterfly",
+                           "Stay classy " + name,
+                           "Have a good one " + name]
+            speech_text = random.choice(named_farewells)
+        else:
+            anonymous_farewells = ["Goodbye",
+                                   "See you later alligator",
+                                   "Catch you on the flippity flip",
+                                   "Bye",
+                                   "See you",
+                                   "Farewell"]
+            speech_text = random.choice(anonymous_farewells)
 
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text))

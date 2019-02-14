@@ -118,11 +118,14 @@ class AdviceIntentHandler(AbstractRequestHandler):
         environment_id = "a9e5ef42-6ee3-4b5b-8dbe-ea6c0fce0556"
         collection_id = "e989821f-31af-4106-9090-55d76ad26452"
         query = discovery.query(environment_id, collection_id, natural_language_query=keywords, passages=True)
-        sentences = get_sentences(query.get_result()["passages"][0]["passage_text"])
-        if len(sentences) != 0:
-            speech_text = sentences[0]
+        if query.get_result()['matching_results'] > 0:
+            sentences = get_sentences(query.get_result()["passages"][0]["passage_text"])
+            if len(sentences) != 0:
+                speech_text = sentences[0]
+            else:
+                speech_text = 'I could not find any results.'
         else:
-            speech_text = 'I could not find any results.'
+            speech_text = 'I was unable to find anything on that subject'
 
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(

@@ -29,6 +29,8 @@ table = dynamodb.Table('Greatle_Users')
 
 def get_sentences(text):
     text = re.sub(r'<.*>', '', text)  # Get rid of html tags
+    first_capital = re.search('[A-Z]', text).start()
+    text = text[first_capital:] # Start at the first capital letter
     sentences = re.split(r'(?<=[^A-Z].[.?!]) +(?=[A-Z])', text)  # Split into sentences
     sentences = [s.replace('\n', ' ').replace('\r', '') for s in sentences]  # Remove new line and returns
     if not sentences[0][0].isupper() and len(sentences) > 1:  # The first sentence may be a fragment so disregard

@@ -7,13 +7,7 @@ branches:
   - master
 script:
   - pytest
-  - mkdir package
-  - cd package
-  - pip install -r ../requirements.txt --target .
-  - zip -r9 ../function.zip .
-  - cd ../
-  - zip -g function.zip dynamo_helper.py
-  - zip -g function.zip greatle.py
+  - ./package.sh
 jobs:
   include:
     - stage: prod

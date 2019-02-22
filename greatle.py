@@ -124,7 +124,7 @@ class AdviceIntentHandler(AbstractRequestHandler):
         if query.get_result()['matching_results'] > 0:
             sentences = get_sentences(query.get_result()["passages"][0]["passage_text"])
             if len(sentences) != 0:
-                speech_text = ''.join(sentences)
+                speech_text = ' '.join(sentences)
             else:
                 speech_text = 'I could not find any results.'
         else:
@@ -146,10 +146,15 @@ class CreateGoalIntentHandler(AbstractRequestHandler):
 
         user_id = handler_input.request_envelope.session.user.user_id[18:]
         slots = handler_input.request_envelope.request.intent.slots
-        goal = slots['Goal'].value
-        dynamo_helper.update_goal_from_users(user_id, goal)
 
-        speech_text = "Sure I'll remember that!"
+
+        if slots == None or "Goal" not in slots:
+            speech_text = "I have no idea what is going on with these slots today please send help"
+        else:
+            goal = slots['Goal'].value
+            dynamo_helper.create_goal(user_id, goal, "PLACEHOLDERDATE1", "PLACEHOLDERDATE2")
+
+            speech_text = "Sure I'll remember that!"
 
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(

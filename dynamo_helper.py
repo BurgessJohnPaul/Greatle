@@ -117,6 +117,3 @@ def create_goal(user_id, goal_desc, created_on, complete_by):
 
     set_col_val(user_id, 'goal_list', goals)
 
-def similar(a, b):
-    return SequenceMatcher(None, a, b).ratio()
-

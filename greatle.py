@@ -5,6 +5,7 @@
 import logging
 import boto3
 import dynamo_helper
+import goal_helper
 import re
 import random
 
@@ -119,6 +120,7 @@ class AdviceIntentHandler(AbstractRequestHandler):
             False)
         return handler_input.response_builder.response
 
+
 class CreateGoalIntentHandler(AbstractRequestHandler):
     """Handler for Hello World Intent."""
     def can_handle(self, handler_input):
@@ -131,14 +133,7 @@ class CreateGoalIntentHandler(AbstractRequestHandler):
         user_id = handler_input.request_envelope.session.user.user_id[18:]
         slots = handler_input.request_envelope.request.intent.slots
 
-
-        if slots == None or "Goal" not in slots:
-            speech_text = "I have no idea what is going on with these slots today please send help"
-        else:
-            goal = slots['Goal'].value
-            dynamo_helper.create_goal(user_id, goal, "PLACEHOLDERDATE1", "PLACEHOLDERDATE2")
-
-            speech_text = "Sure I'll remember that!"
+        speech_text = goal_helper.create_goal_helper(user_id, slots)
 
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(
@@ -157,20 +152,34 @@ class RetrieveGoalIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
 
         user_id = handler_input.request_envelope.session.user.user_id[18:]
-        response = dynamo_helper.get_item_from_users(user_id)
 
-        if 'Item' in response:
-            if 'goal' in response['Item']:
-                speech_text = "Your goal was to " + response['Item']['goal']
-            else:
-                speech_text = "It doesn't seem like you have set any goals recently,"
-        else:
-            speech_text = "There was a terrible error"
+        speech_text = goal_helper.retrieve_goal_helper(user_id)
 
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(
             False)
         return handler_input.response_builder.response
+
+
+class ListGoalIntentHandler(AbstractRequestHandler):
+    """Handler for Hello World Intent."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("ListGoalIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+
+        user_id = handler_input.request_envelope.session.user.user_id[18:]
+
+        speech_text = goal_helper.list_goal_helper(user_id)
+
+        handler_input.response_builder.speak(speech_text).set_card(
+            SimpleCard("Hello World", speech_text)).set_should_end_session(
+            False)
+        return handler_input.response_builder.response
+
 
 class HelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
@@ -279,6 +288,7 @@ sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(AdviceIntentHandler())
 sb.add_request_handler(CreateGoalIntentHandler())
 sb.add_request_handler(RetrieveGoalIntentHandler())
+sb.add_request_handler(ListGoalIntentHandler())
 
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())

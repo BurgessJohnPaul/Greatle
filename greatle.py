@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-# This is a simple Hello World Alexa Skill, built using
-# the implementation of handler classes approach in skill builder.
+# This is Henry by Greatle
+
 import logging
 import boto3
 import dynamo_helper
@@ -279,8 +279,6 @@ sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(AdviceIntentHandler())
 sb.add_request_handler(CreateGoalIntentHandler())
 sb.add_request_handler(RetrieveGoalIntentHandler())
-
-sb.add_request_handler(HelloWorldIntentHandler())
 
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())

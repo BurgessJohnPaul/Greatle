@@ -1,4 +1,5 @@
 import boto3
+from difflib import SequenceMatcher
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('Greatle_Users')
@@ -115,4 +116,7 @@ def create_goal(user_id, goal_desc, created_on, complete_by):
     goals.append(new_goal)
 
     set_col_val(user_id, 'goal_list', goals)
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 

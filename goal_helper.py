@@ -9,7 +9,7 @@ def create_goal_helper(user_id, slots):
         speech_text = "I have no idea what is going on with these slots today please send help"
     else:
         goal = slots['Goal'].value
-        if slots["DATE"]["value"] is not None:
+        if slots["DATE"].value is not None:
             dynamo_helper.create_goal(user_id, goal, strftime(DATE_FORMAT), slots["DATE"].value)
         else:
             dynamo_helper.create_goal(user_id, goal, strftime(DATE_FORMAT), "")

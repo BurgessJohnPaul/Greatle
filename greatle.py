@@ -20,6 +20,8 @@ from ask_sdk_model import Response
 
 from watson_developer_cloud import DiscoveryV1
 
+from language_helper import get_quote
+
 sb = SkillBuilder()
 
 logger = logging.getLogger(__name__)
@@ -114,7 +116,7 @@ class AdviceIntentHandler(AbstractRequestHandler):
                 speech_text = 'I could not find any results.'
         else:
             speech_text = 'I was unable to find anything on that subject'
-
+        speech_text = get_quote(speech_text)
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(
             False)

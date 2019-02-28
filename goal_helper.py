@@ -1,5 +1,7 @@
 import dynamo_helper
+from time import strftime
 
+DATE_FORMAT = "%Y-%m-%d"
 
 def create_goal_helper(user_id, slots):
 
@@ -7,7 +9,10 @@ def create_goal_helper(user_id, slots):
         speech_text = "I have no idea what is going on with these slots today please send help"
     else:
         goal = slots['Goal'].value
-        dynamo_helper.create_goal(user_id, goal, "PLACEHOLDERDATE1", "PLACEHOLDERDATE2")
+        if "value" in slots["DATE"]:
+            dynamo_helper.create_goal(user_id, goal, strftime(DATE_FORMAT), slots["DATE"].value)
+        else:
+            dynamo_helper.create_goal(user_id, goal, strftime(DATE_FORMAT), "")
 
         speech_text = "Sure I'll remember that!"
 
@@ -39,3 +44,4 @@ def list_goal_helper(user_id):
             speech_text += " " + goal
 
     return speech_text
+

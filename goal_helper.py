@@ -36,6 +36,6 @@ def list_goal_helper(user_id):
     else:
         speech_text = "Your goals are to "
         for goal in goal_list:
-            speech_text.append(goal)
+            speech_text += " " + goal
 
     return speech_text

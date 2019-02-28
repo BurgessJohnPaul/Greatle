@@ -1,4 +1,5 @@
 import boto3
+from difflib import SequenceMatcher
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('Greatle_Users')

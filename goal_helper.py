@@ -52,10 +52,12 @@ def retrieve_goal_to_delete_helper(user_id, slots):
     if slots is None:
         # should not happen, but check here in case this intent somehow gets called
         speech_text = "Sorry, I did not understand what you said there. Can you say it again or word it differently?"
+        goal_description = None
     else:
         goal_list = dynamo_helper.list_goals(user_id)
         if len(goal_list) == 0:
             speech_text = "Sorry you do not have any active goals to delete"
+            goal_description = None
         else:
             most_similar_string, similar_value = language_helper.get_most_similar_string(slots['Goal'].value, goal_list)
             print("Most similar string: ", most_similar_string)
@@ -64,9 +66,11 @@ def retrieve_goal_to_delete_helper(user_id, slots):
             # one of their goals
             if similar_value >= .7:
                 speech_text = "Are you sure you want me to delete your goal to " + most_similar_string + "?"
+                goal_description = most_similar_string
             else:
                 # Maybe if we get here, we could ask if we should list the goals (add info to session_attributes)
-                speech_text = "Sorry, you do not have a goal to " + slots['Goal'].value
+                speech_text = "Sorry, you do not have a goal to " + slots['Goal'].value + ". You can ask me to list your goals if you want."
+                goal_description = None
 
-    return speech_text
+    return speech_text, goal_description
 

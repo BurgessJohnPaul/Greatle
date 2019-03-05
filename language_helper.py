@@ -8,11 +8,12 @@ def similar(a, b):
 
 def get_most_similar_string(goal_string, string_list):
     best_string = "@"
-
+    similarity_value = similar(best_string, goal_string)
     for s in string_list:
-        if similar(s, goal_string) > similar(best_string, goal_string):
+        if similar(s, goal_string) > similarity_value:
             best_string = s
-    return best_string
+            similarity_value = similar(best_string, goal_string)
+    return best_string, similarity_value
 
 
 def get_quote(raw_str):

@@ -140,6 +140,7 @@ class CreateGoalIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(
             False)
+        handler_input.attributes_manager.session_attributes
         return handler_input.response_builder.response
 
 
@@ -155,8 +156,7 @@ class DeleteGoalIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(
             False)
-        handler_input.request_envelope.session.attributes = {"goal_to_delete":"I, henry, was able to access the session attributes"}
-        print("Session attributes: ", handler_input.request_envelope.session.attributes)
+        handler_input.attributes_manager.session_attributes = {"goal_to_delete":"I, henry, was able to access the session attributes"}
         return handler_input.response_builder.response
 
 

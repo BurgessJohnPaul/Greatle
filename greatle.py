@@ -30,6 +30,7 @@ logger.setLevel(logging.INFO)
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('Greatle_Users')
+GOAL_TO_DELETE_SESSION_ATTRIBUTE = "goal_to_delete"
 
 
 def get_sentences(text):
@@ -141,7 +142,6 @@ class CreateGoalIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(
             False)
-        handler_input.attributes_manager.session_attributes
         return handler_input.response_builder.response
 
 
@@ -153,11 +153,14 @@ class DeleteGoalIntentHandler(AbstractRequestHandler):
         user_id = handler_input.request_envelope.session.user.user_id[18:]
         slots = handler_input.request_envelope.request.intent.slots
 
-        speech_text = goal_helper.retrieve_goal_to_delete_helper(user_id, slots)
+        speech_text, goal_description = goal_helper.retrieve_goal_to_delete_helper(user_id, slots)
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(
             False)
-        handler_input.attributes_manager.session_attributes = {"goal_to_delete":"I, henry, was able to access the session attributes"}
+        if handler_input.request_envelope.session.attributes is None:
+            handler_input.attributes_manager.session_attributes = {GOAL_TO_DELETE_SESSION_ATTRIBUTE: goal_description}
+        else:
+            handler_input.attributes_manager.session_attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE] = goal_description
         return handler_input.response_builder.response
 
 
@@ -253,10 +256,27 @@ class YesIntentHandler(AbstractRequestHandler):
         return is_intent_name("AMAZON.YesIntent")(handler_input)
 
     def handle(self, handler_input):
-        if handler_input.request_envelope.session.attributes is not None and "goal_to_delete" in handler_input.request_envelope.session.attributes:
-            speech_text = handler_input.request_envelope.session.attributes["goal_to_delete"]
+        user_id = handler_input.request_envelope.session.user.user_id[18:]
+        if handler_input.request_envelope.session.attributes is not None and GOAL_TO_DELETE_SESSION_ATTRIBUTE in handler_input.request_envelope.session.attributes:
+            dynamo_helper.delete_goal(user_id, handler_input.request_envelope.session.attributes[
+                GOAL_TO_DELETE_SESSION_ATTRIBUTE])
+            speech_text = "Okay, I deleted that goal"
         else:
             speech_text = "Sorry, I am unsure why you said yes. Please start your intent over."
+
+        handler_input.response_builder.speak(speech_text)
+        return handler_input.response_builder.response
+
+
+class NoIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return is_intent_name("AMAZON.NoIntent")(handler_input)
+
+    def handle(self, handler_input):
+        if handler_input.request_envelope.session.attributes is not None and GOAL_TO_DELETE_SESSION_ATTRIBUTE in handler_input.request_envelope.session.attributes:
+            speech_text = "Okay, I will not delete that goal"
+        else:
+            speech_text = "Sorry, I am unsure why you said no. Please start your intent over."
 
         handler_input.response_builder.speak(speech_text)
         return handler_input.response_builder.response
@@ -318,6 +338,7 @@ sb.add_request_handler(ListGoalIntentHandler())
 sb.add_request_handler(DeleteGoalIntentHandler())
 
 sb.add_request_handler(YesIntentHandler())
+sb.add_request_handler(NoIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(FallbackIntentHandler())

@@ -1,0 +1,18 @@
+{
+  "greetings": [
+    "Hello",
+    "What's up",
+    "Howdy"
+  ],
+  "goodbyes": [
+    "Goodbye $name",
+    "See you later $name",
+    "Bye $name",
+    "Farewell $name",
+    "Peace out $name",
+    "Bye bye butterfly",
+    "Stay classy $name",
+    "Have a good one $name",
+    "See ya later alligator"
+  ]
+}

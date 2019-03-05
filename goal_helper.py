@@ -3,9 +3,9 @@ import language_helper
 from time import strftime
 
 DATE_FORMAT = "%Y-%m-%d"
+NO_DATE = "NO_DATE"
 
 def create_goal_helper(user_id, slots):
-
     if slots is None or "Goal" not in slots:
         speech_text = "I have no idea what is going on with these slots today please send help"
     else:
@@ -13,7 +13,7 @@ def create_goal_helper(user_id, slots):
         if slots["DATE"].value is not None:
             dynamo_helper.create_goal(user_id, goal, strftime(DATE_FORMAT), slots["DATE"].value)
         else:
-            dynamo_helper.create_goal(user_id, goal, strftime(DATE_FORMAT), "")
+            dynamo_helper.create_goal(user_id, goal, strftime(DATE_FORMAT), NO_DATE)
 
         speech_text = "Sure I'll remember that!"
 

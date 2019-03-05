@@ -31,6 +31,7 @@ logger.setLevel(logging.INFO)
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('Greatle_Users')
 GOAL_TO_DELETE_SESSION_ATTRIBUTE = "goal_to_delete"
+card_title = 'Henry by Greatle'
 
 
 def get_sentences(text):
@@ -63,11 +64,11 @@ class LaunchRequestHandler(AbstractRequestHandler):
             else:
                 speech_text = "Hello, welcome back! How may I assist you?"
         else:
-            speech_text = "Hello, welcome to greatle. I am here to give you encouragement, advice, and help set and maintain goals. How may I assist you?"
+            speech_text = "Hello, welcome to Greatle. I am here to give you encouragement, advice, and help set and maintain goals. How may I assist you?"
             dynamo_helper.put_item_to_users(user_id)
 
         handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard("Hello World", speech_text)).set_should_end_session(
+            SimpleCard(card_title, speech_text)).set_should_end_session(
             False)
         return handler_input.response_builder.response
 
@@ -82,7 +83,7 @@ class UpdateNameIntentHandler(AbstractRequestHandler):
         name = slots['Name'].value
         dynamo_helper.update_name_from_users(user_id, name)
         speech_text = "Okay, I will call you " + name + " from now on"
-        handler_input.response_builder.speak(speech_text).set_card(SimpleCard("Hello World", speech_text)).set_should_end_session(False)
+        handler_input.response_builder.speak(speech_text).set_card(SimpleCard(card_title, speech_text)).set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -117,10 +118,10 @@ class AdviceIntentHandler(AbstractRequestHandler):
             else:
                 speech_text = 'I could not find any results.'
         else:
-            speech_text = 'I was unable to find anything on that subject'
+            speech_text = 'I was unable to find anything on that subject.'
         speech_text = get_quote(speech_text)
         handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard("Hello World", speech_text)).set_should_end_session(
+            SimpleCard(card_title, speech_text)).set_should_end_session(
             False)
         return handler_input.response_builder.response
 
@@ -140,7 +141,7 @@ class CreateGoalIntentHandler(AbstractRequestHandler):
         speech_text = goal_helper.create_goal_helper(user_id, slots)
 
         handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard("Hello World", speech_text)).set_should_end_session(
+            SimpleCard(card_title, speech_text)).set_should_end_session(
             False)
         return handler_input.response_builder.response
 
@@ -155,7 +156,7 @@ class DeleteGoalIntentHandler(AbstractRequestHandler):
 
         speech_text, goal_description = goal_helper.retrieve_goal_to_delete_helper(user_id, slots)
         handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard("Hello World", speech_text)).set_should_end_session(
+            SimpleCard(card_title, speech_text)).set_should_end_session(
             False)
         if handler_input.request_envelope.session.attributes is None:
             handler_input.attributes_manager.session_attributes = {GOAL_TO_DELETE_SESSION_ATTRIBUTE: goal_description}
@@ -179,7 +180,7 @@ class RetrieveGoalIntentHandler(AbstractRequestHandler):
         speech_text = goal_helper.retrieve_goal_helper(user_id)
 
         handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard("Hello World", speech_text)).set_should_end_session(
+            SimpleCard(card_title, speech_text)).set_should_end_session(
             False)
         return handler_input.response_builder.response
 
@@ -199,7 +200,7 @@ class ListGoalIntentHandler(AbstractRequestHandler):
         speech_text = goal_helper.list_goal_helper(user_id)
 
         handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard("Hello World", speech_text)).set_should_end_session(
+            SimpleCard(card_title, speech_text)).set_should_end_session(
             False)
         return handler_input.response_builder.response
 
@@ -216,7 +217,7 @@ class HelpIntentHandler(AbstractRequestHandler):
 
         handler_input.response_builder.speak(speech_text).ask(
             speech_text).set_card(SimpleCard(
-                "Hello World", speech_text))
+                card_title, speech_text))
         return handler_input.response_builder.response
 
 
@@ -247,7 +248,7 @@ class CancelOrStopIntentHandler(AbstractRequestHandler):
         speech_text = random.choice(response_options)
 
         handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard("Hello World", speech_text))
+            SimpleCard(card_title, speech_text))
         return handler_input.response_builder.response
 
 

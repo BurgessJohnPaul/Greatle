@@ -6,7 +6,6 @@ import logging
 import boto3
 import dynamo_helper
 import goal_helper
-import re
 import random
 import json
 
@@ -21,7 +20,7 @@ from ask_sdk_model import Response
 
 from watson_developer_cloud import DiscoveryV1
 
-from language_helper import get_quote
+from language_helper import get_passages
 
 sb = SkillBuilder()
 
@@ -33,16 +32,6 @@ table = dynamodb.Table('Greatle_Users')
 GOAL_TO_DELETE_SESSION_ATTRIBUTE = "goal_to_delete"
 card_title = 'Henry by Greatle'
 
-
-def get_sentences(text):
-    text = re.sub(r'<.*>', '', text)  # Get rid of html tags
-    first_capital = re.search('[A-Z]', text).start()
-    text = text[first_capital:] # Start at the first capital letter
-    sentences = re.split(r'(?<=[^A-Z].[.?!]) +(?=[A-Z])', text)  # Split into sentences
-    sentences = [s.replace('\n', ' ').replace('\r', '') for s in sentences]  # Remove new line and returns
-    if not sentences[0][0].isupper() and len(sentences) > 1:  # The first sentence may be a fragment so disregard
-        sentences = sentences[1:]
-    return sentences
 
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
@@ -97,29 +86,28 @@ class AdviceIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
 
         #speech_text = "You are more capable than you imagine!"
-        print ("Advice called")
+        print("Advice called")
         slots = handler_input.request_envelope.request.intent.slots
-        print (slots)
+        print(slots)
         keywords = slots['AdviceTopic'].value
-        print (keywords)
+        print(keywords)
         discovery = DiscoveryV1(
             version='2018-12-03',
             iam_apikey='Z5qjSJAEOoxr29_cq2AB2YhDasgd0zKkCQAEBvlTdkLf',
             url='https://gateway-wdc.watsonplatform.net/discovery/api'
         )
-
         environment_id = "a9e5ef42-6ee3-4b5b-8dbe-ea6c0fce0556"
         collection_id = "e989821f-31af-4106-9090-55d76ad26452"
         query = discovery.query(environment_id, collection_id, natural_language_query=keywords, passages=True)
+        print(json.dumps(query, indent=4, sort_keys=True))
         if query.get_result()['matching_results'] > 0:
-            sentences = get_sentences(query.get_result()["passages"][0]["passage_text"])
-            if len(sentences) != 0:
-                speech_text = ' '.join(sentences)
+            sentences = get_passages(query.get_result()["passages"])
+            if len(sentences) > 0:
+                speech_text = sentences[random.randint(0, len(sentences) - 1)]
             else:
                 speech_text = 'I could not find any results.'
         else:
             speech_text = 'I was unable to find anything on that subject.'
-        speech_text = get_quote(speech_text)
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard(card_title, speech_text)).set_should_end_session(
             False)

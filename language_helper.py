@@ -1,4 +1,5 @@
 import random
+import re
 from difflib import SequenceMatcher
 
 
@@ -17,6 +18,15 @@ def get_most_similar_string(goal_string, string_list):
 
 
 def get_quote(raw_str):
-    is_quote = lambda quote: '#' not in quote and '@' not in quote and quote is not ''
+    is_quote = lambda quote: '#' not in quote and '@' not in quote and re.match('^[A-Z][^?!.]*[?.!]$', quote) is not None
     quotes = list(filter(is_quote, [raw.strip() for raw in raw_str.split('^')]))
-    return quotes[random.randint(0, len(quotes) - 1)] if len(quotes) > 0 else None
+    return quotes if len(quotes) > 0 else None
+
+
+def get_passages(raw_list):
+    passages = []
+    for raw in raw_list:
+        quotes = get_quote(re.sub(r'<.*>', '', raw["passage_text"]))
+        if quotes is not None:
+            [passages.append(quote) for quote in quotes]
+    return passages

@@ -256,7 +256,7 @@ class CancelOrStopIntentHandler(AbstractRequestHandler):
 
         goodbyes = data["goodbyes"]
 
-        if 'Item' and 'user_name' in response['Item']:
+        if 'Item' in response and 'user_name' in response['Item']:
             name = response['Item']['user_name']
             response_options = [x.replace("$name", name) for x in goodbyes]
         else:

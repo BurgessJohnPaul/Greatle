@@ -363,6 +363,8 @@ sb.add_request_handler(CompleteGoalIntentHandler())
 sb.add_request_handler(RetrieveGoalIntentHandler())
 sb.add_request_handler(ListGoalIntentHandler())
 sb.add_request_handler(DeleteGoalIntentHandler())
+sb.add_request_handler(ListCompletedGoalIntentHandler())
+
 
 sb.add_request_handler(YesIntentHandler())
 sb.add_request_handler(NoIntentHandler())

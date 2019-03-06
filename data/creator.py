@@ -4,7 +4,17 @@ from docx import Document
 
 MAX_CHARACTERS = 49000
 
+def isEnglish(s):
+    try:
+        s.encode(encoding='utf-8').decode('ascii')
+    except UnicodeDecodeError:
+        return False
+    else:
+        return True
+
 def delimited_quote(quote, tags=None, author=None):
+    if not isEnglish(quote):
+        return ''
     d_tags = ''
     if tags is not None:
         tags = [tag.strip() for tag in tags]
@@ -36,6 +46,7 @@ with open('quotes.json', encoding='windows-1256') as f:
     data = json.load(f)
 for obj in data:
     quotes.add(parse_quotes_json_object(obj))
+quotes.remove('')
 save_quotes_to_word(quotes, 'quotes')
 
 quotes.clear()

@@ -8,3 +8,4 @@ zip -g function.zip dynamo_helper.py
 zip -g function.zip language_helper.py
 zip -g function.zip goal_helper.py
 zip -g function.zip greatle.py
+zip -g function.zip greetings.json

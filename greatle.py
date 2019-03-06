@@ -210,6 +210,26 @@ class ListGoalIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
+class ListCompletedGoalIntentHandler(AbstractRequestHandler):
+    """Handler for Hello World Intent."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("ListCompletedGoalIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+
+        user_id = handler_input.request_envelope.session.user.user_id[18:]
+
+        speech_text = goal_helper.list_goal_helper(user_id)
+
+        handler_input.response_builder.speak(speech_text).set_card(
+            SimpleCard(card_title, speech_text)).set_should_end_session(
+            False)
+        return handler_input.response_builder.response
+
+
 class HelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
     def can_handle(self, handler_input):

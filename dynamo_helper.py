@@ -66,6 +66,10 @@ def update_age_from_users(user_id, age):
 
 
 def list_goals(user_id):
+    return list_goals_with_status(user_id, "ACTIVE")
+
+
+def list_goals_with_status(user_id, status):
     response = get_row(user_id)
 
     desc_list = []
@@ -74,7 +78,7 @@ def list_goals(user_id):
     if 'goal_list' in response['Item']:
         goals = response['Item']['goal_list']
         for goal in goals:
-            if (goal["status"] == "ACTIVE"):
+            if (goal["status"] == status):
                 desc_list.append(goal["description"])
     return desc_list
 

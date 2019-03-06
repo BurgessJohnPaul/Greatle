@@ -53,6 +53,26 @@ def list_goal_helper(user_id):
     return speech_text
 
 
+def list_completed_goal_helper(user_id):
+    goal_list = dynamo_helper.list_goals_with_status(user_id, "COMPLETED")
+
+    if len(goal_list) == 0:
+        speech_text = "You have not completed any goals. Get off the couch and do something for once.'"
+    else:
+        if len(goal_list) == 1:
+            speech_text = "Your completed goal was to " + goal_list[0]
+        else:
+            speech_text = "Your completed goals were to "
+            for ind, goal in enumerate(goal_list):
+                if ind == len(goal_list) - 1:
+                    speech_text += "and " + goal
+                else:
+                    speech_text += goal + ", "
+
+    return speech_text
+
+
+
 def complete_goal_helper(user_id, slots):
     # the goal slot in the intent should be required
     if slots is None:

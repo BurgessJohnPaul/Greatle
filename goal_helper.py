@@ -40,9 +40,15 @@ def list_goal_helper(user_id):
     if len(goal_list) == 0:
         speech_text = "You do not have any active goals. Create a new goal by saying something like: 'I want to go to the gym today'"
     else:
-        speech_text = "Your goals are to "
-        for goal in goal_list:
-            speech_text += " " + goal
+        if len(goal_list) == 1:
+            speech_text = "Your goal is to " + goal_list[0]
+        else:
+            speech_text = "Your goals are to "
+            for ind, goal in enumerate(goal_list):
+                if ind == len(goal_list) - 1:
+                    speech_text += "and " + goal
+                else:
+                    speech_text += goal + ", "
 
     return speech_text
 
@@ -66,7 +72,7 @@ def complete_goal_helper(user_id, slots):
                 goal_description = most_similar_string
                 dynamo_helper.update_goal_status(user_id, goal_description, "COMPLETED")
 
-                speech_text = "I have marked your goal to " + goal_description + "as completed"
+                speech_text = "I have marked your goal to " + goal_description + " as completed"
 
             else:
                 # Maybe if we get here, we could ask if we should list the goals (add info to session_attributes)

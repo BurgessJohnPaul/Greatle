@@ -165,6 +165,23 @@ class DeleteGoalIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
+class CompleteGoalIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return is_intent_name("CompleteGoalIntent")(handler_input)
+
+    def handle(self, handler_input):
+        user_id = handler_input.request_envelope.session.user.user_id[18:]
+        slots = handler_input.request_envelope.request.intent.slots
+
+        speech_text = goal_helper.complete_goal_helper(user_id, slots)
+
+        handler_input.response_builder.speak(speech_text).set_card(
+            SimpleCard(card_title, speech_text)).set_should_end_session(
+            False)
+
+        return handler_input.response_builder.response
+
+
 class RetrieveGoalIntentHandler(AbstractRequestHandler):
     """Handler for Hello World Intent."""
 
@@ -334,6 +351,7 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
 sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(AdviceIntentHandler())
 sb.add_request_handler(CreateGoalIntentHandler())
+sb.add_request_handler(CompleteGoalIntentHandler())
 sb.add_request_handler(RetrieveGoalIntentHandler())
 sb.add_request_handler(ListGoalIntentHandler())
 sb.add_request_handler(DeleteGoalIntentHandler())

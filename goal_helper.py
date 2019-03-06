@@ -47,6 +47,34 @@ def list_goal_helper(user_id):
     return speech_text
 
 
+def complete_goal_helper(user_id, slots):
+    # the goal slot in the intent should be required
+    if slots is None:
+        # should not happen, but check here in case this intent somehow gets called
+        speech_text = "Sorry, I did not understand what you said there. Can you say it again or word it differently?"
+    else:
+        goal_list = dynamo_helper.list_goals(user_id)
+        if len(goal_list) == 0:
+            speech_text = "Sorry you do not have any active goals to complete"
+        else:
+            most_similar_string, similar_value = language_helper.get_most_similar_string(slots['Goal'].value, goal_list)
+            print("Most similar string: ", most_similar_string)
+            print("Similarity value: ", similar_value)
+            # Check here right now just in case we dont want to return something if they say something that is not like
+            # one of their goals
+            if similar_value >= .7:
+                goal_description = most_similar_string
+                dynamo_helper.update_goal_status(user_id, goal_description, "COMPLETED")
+
+                speech_text = "I have marked your goal to " + goal_description + "as completed"
+
+            else:
+                # Maybe if we get here, we could ask if we should list the goals (add info to session_attributes)
+                speech_text = "Sorry, you do not have a goal to " + slots['Goal'].value + ". You can ask me to list your goals if you want."
+
+    return speech_text
+
+
 def retrieve_goal_to_delete_helper(user_id, slots):
     # the goal slot in the intent should be required
     if slots is None:

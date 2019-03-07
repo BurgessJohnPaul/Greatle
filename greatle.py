@@ -98,7 +98,7 @@ class AdviceIntentHandler(AbstractRequestHandler):
         )
         environment_id = "a9e5ef42-6ee3-4b5b-8dbe-ea6c0fce0556"
         collection_id = "71f0df80-85e0-48f5-bc76-b5d9eac1ac9e"
-        query = discovery.query(environment_id, collection_id, natural_language_query=keywords, passages=True)
+        query = discovery.query(environment_id, collection_id, natural_language_query=keywords, passages=True, passages_characters=500)
         print(json.dumps(query.get_result(), indent=4, sort_keys=True))
         if query.get_result()['matching_results'] > 0:
             sentences = get_passages(query.get_result()["passages"], keywords)

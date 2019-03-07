@@ -97,11 +97,11 @@ class AdviceIntentHandler(AbstractRequestHandler):
             url='https://gateway-wdc.watsonplatform.net/discovery/api'
         )
         environment_id = "a9e5ef42-6ee3-4b5b-8dbe-ea6c0fce0556"
-        collection_id = "0e9f0a99-5bd7-4a0f-b34d-8c796d098d39"
+        collection_id = "71f0df80-85e0-48f5-bc76-b5d9eac1ac9e"
         query = discovery.query(environment_id, collection_id, natural_language_query=keywords, passages=True)
         print(json.dumps(query.get_result(), indent=4, sort_keys=True))
         if query.get_result()['matching_results'] > 0:
-            sentences = get_passages(query.get_result()["passages"])
+            sentences = get_passages(query.get_result()["passages"], keywords)
             if len(sentences) > 0:
                 speech_text = sentences[random.randint(0, len(sentences) - 1)]
             else:

@@ -2,7 +2,7 @@ import json
 import csv
 from docx import Document
 
-MAX_CHARACTERS = 49000
+MAX_CHARACTERS = 49500
 
 def isEnglish(s):
     try:
@@ -20,7 +20,7 @@ def delimited_quote(quote, tags=None, author=None):
         tags = [tag.strip() for tag in tags]
         d_tags = '#{};'.format(';'.join(tags))
     d_author = '' if author is None else '@{}'.format(author.split(',')[0].strip())
-    return '{}{}^{}^\n'.format(d_tags, d_author, quote.strip())
+    return '{}{}^{}_\n'.format(d_tags, d_author, quote.strip())
 
 def parse_quotes_json_object(obj):
     tags = obj["Tags"] if "Tags" in obj else None
@@ -32,13 +32,13 @@ def save_quotes_to_word(quotes, name):
     docNum = 0
     document = Document()
     for quote in quotes:
-        document.add_paragraph(quote)
-        numCharacters += len(quote)
-        if numCharacters >= MAX_CHARACTERS:
+        if numCharacters + len(quote) >= MAX_CHARACTERS:
             document.save(name + str(docNum) + '.docx')
             document = Document()
             numCharacters = 0
             docNum += 1
+        document.add_paragraph(quote)
+        numCharacters += len(quote)
     document.save(name + str(docNum) + '.docx')
 
 quotes = set()

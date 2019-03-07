@@ -222,7 +222,7 @@ class ListCompletedGoalIntentHandler(AbstractRequestHandler):
 
         user_id = handler_input.request_envelope.session.user.user_id[18:]
 
-        speech_text = goal_helper.list_goal_helper(user_id)
+        speech_text = goal_helper.list_completed_goal_helper(user_id)
 
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard(card_title, speech_text)).set_should_end_session(

@@ -27,7 +27,7 @@ def get_quote(raw_str, keyword):
 def get_passages(raw_list, keyword):
     passages = []
     for raw in raw_list:
-        quotes = get_quote(re.sub(r'<.*>', '', raw["passage_text"], keyword))
+        quotes = get_quote(re.sub(r'<.*>', '', raw["passage_text"]), keyword)
         if quotes is not None:
             [passages.append(quote) for quote in quotes]
     return passages

@@ -287,6 +287,7 @@ class YesIntentHandler(AbstractRequestHandler):
             dynamo_helper.delete_goal(user_id, handler_input.request_envelope.session.attributes[
                 GOAL_TO_DELETE_SESSION_ATTRIBUTE])
             speech_text = "Okay, I deleted that goal"
+            handler_input.request_envelope.session.attributes.pop(GOAL_TO_DELETE_SESSION_ATTRIBUTE, None)
         else:
             speech_text = "Sorry, I am unsure why you said yes. Please start your intent over."
 

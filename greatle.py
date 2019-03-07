@@ -97,7 +97,7 @@ class AdviceIntentHandler(AbstractRequestHandler):
             url='https://gateway-wdc.watsonplatform.net/discovery/api'
         )
         environment_id = "a9e5ef42-6ee3-4b5b-8dbe-ea6c0fce0556"
-        collection_id = "e989821f-31af-4106-9090-55d76ad26452"
+        collection_id = "0e9f0a99-5bd7-4a0f-b34d-8c796d098d39"
         query = discovery.query(environment_id, collection_id, natural_language_query=keywords, passages=True)
         print(json.dumps(query.get_result(), indent=4, sort_keys=True))
         if query.get_result()['matching_results'] > 0:

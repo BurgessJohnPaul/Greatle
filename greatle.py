@@ -291,7 +291,7 @@ class YesIntentHandler(AbstractRequestHandler):
         else:
             speech_text = "Sorry, I am unsure why you said yes. Please start your intent over."
 
-        handler_input.response_builder.speak(speech_text)
+        handler_input.response_builder.speak(speech_text).set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -305,7 +305,7 @@ class NoIntentHandler(AbstractRequestHandler):
         else:
             speech_text = "Sorry, I am unsure why you said no. Please start your intent over."
 
-        handler_input.response_builder.speak(speech_text)
+        handler_input.response_builder.speak(speech_text).set_should_end_session(False)
         return handler_input.response_builder.response
 
 

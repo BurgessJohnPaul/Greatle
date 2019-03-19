@@ -320,11 +320,10 @@ class FallbackIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speech_text = (
-            "The Hello World skill can't help you with that.  "
-            "You can say hello!!")
-        reprompt = "You can say hello!!"
-        handler_input.response_builder.speak(speech_text).ask(reprompt)
+        speech_text = "I don't understand your command. Say 'help' for a list of commands."
+        handler_input.response_builder.speak(speech_text).set_card(
+            SimpleCard(card_title, speech_text)).set_should_end_session(
+            False)
         return handler_input.response_builder.response
 
 

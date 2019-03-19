@@ -238,7 +238,11 @@ class HelpIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speech_text = "You can say hello to me!"
+        speech_text = "I can give you life advice. You can ask me for advice by saying something like 'I want advice" \
+                      " about love'. I can also help keep track of your goals. You can add a new goal by saying 'I " \
+                      "want to meet Hillary Clinton'. Then, once you achieve this, you can say 'I have" \
+                      " completed my goal of meeting Hillary Clinton' You can ask my about your goals by saying 'List" \
+                      " my goals' or 'List my completed goals' You can also ask me about koans!"
 
         handler_input.response_builder.speak(speech_text).ask(
             speech_text).set_card(SimpleCard(

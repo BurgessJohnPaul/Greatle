@@ -244,9 +244,9 @@ class HelpIntentHandler(AbstractRequestHandler):
                       " completed my goal of meeting Hillary Clinton' You can ask my about your goals by saying 'List" \
                       " my goals' or 'List my completed goals' You can also ask me about koans!"
 
-        handler_input.response_builder.speak(speech_text).ask(
-            speech_text).set_card(SimpleCard(
-                card_title, speech_text))
+        handler_input.response_builder.speak(speech_text).set_card(
+            SimpleCard(card_title, speech_text)).set_should_end_session(
+            False)
         return handler_input.response_builder.response
 
 

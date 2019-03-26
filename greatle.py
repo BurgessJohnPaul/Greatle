@@ -239,10 +239,45 @@ class HelpIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         speech_text = "I can give you life advice. You can ask me for advice by saying something like 'I want advice" \
-                      " about love'. I can also help keep track of your goals. You can add a new goal by saying 'I " \
-                      "want to meet Hillary Clinton'. Then, once you achieve this, you can say 'I have" \
-                      " completed my goal of meeting Hillary Clinton' You can ask my about your goals by saying 'List" \
-                      " my goals' or 'List my completed goals' You can also ask me about koans!"
+                      " about love'. I can also help you manage your goals. Say 'goal help' to learn more. If you want"\
+                      "to learn about my other features, like drunk mode, say 'other help' like other"
+
+        handler_input.response_builder.speak(speech_text).set_card(
+            SimpleCard(card_title, speech_text)).set_should_end_session(
+            False)
+        return handler_input.response_builder.response
+
+
+class GoalHelpIntentHandler(AbstractRequestHandler):
+    """Handler for Help Intent."""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("GoalHelpGoalIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        speech_text = "I can help you keep track of your goals. You can add a new goal by saying something like 'I " \
+                      "want to meet Hillary Clinton'. Then, if you achieve this, you can say 'I have" \
+                      " completed my goal of meeting Hillary Clinton'. If you give up on your goal, you can can say, " \
+                      "'Delete my goal to meet Hillary Clinton'. You can ask my about your goals by saying 'List" \
+                      " my goals' or 'List my completed goals.'"
+
+        handler_input.response_builder.speak(speech_text).set_card(
+            SimpleCard(card_title, speech_text)).set_should_end_session(
+            False)
+        return handler_input.response_builder.response
+
+
+class OtherHelpIntentHandler(AbstractRequestHandler):
+    """Handler for Help Intent."""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("OtherHelpIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        speech_text = "You can say 'turn on drunk mode' to make me talk differently. If you want me to tell you a " \
+                      "story, you can say 'tell me a koan.'"
 
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard(card_title, speech_text)).set_should_end_session(
@@ -368,7 +403,8 @@ sb.add_request_handler(RetrieveGoalIntentHandler())
 sb.add_request_handler(ListGoalIntentHandler())
 sb.add_request_handler(DeleteGoalIntentHandler())
 sb.add_request_handler(ListCompletedGoalIntentHandler())
-
+sb.add_request_handler(GoalHelpIntentHandler())
+sb.add_request_handler(OtherHelpIntentHandler())
 
 sb.add_request_handler(YesIntentHandler())
 sb.add_request_handler(NoIntentHandler())

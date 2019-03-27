@@ -19,7 +19,7 @@ def process_to_IDs_in_sparse_format(sp, sentences):
     dense_shape = (len(ids), max_len)
     values = [item for sublist in ids for item in sublist]
     indices = [[row, col] for row in range(len(ids)) for col in range(len(ids[row]))]
-    return (values, indices, dense_shape)
+    return values, indices, dense_shape
 
 
 def plot_similarity(labels, features, rotation):
@@ -72,6 +72,12 @@ class TfSimilarity:
             self.sp = spm.SentencePieceProcessor()
             self.sp.Load(spm_path)
             print("SentencePiece model loaded at {}.".format(spm_path))
+
+            # Load tf session
+            self.session = tf.Session()
+            self.session.run(tf.global_variables_initializer())
+            self.session.run(tf.tables_initializer())
+
         except Exception as e:
             print('TfSimilarity error:')
             print(e)
@@ -82,17 +88,7 @@ class TfSimilarity:
     def get_similarity(self, str1, str2):
         try:
             messages = [str1, str2]
-
-            sentence_vectors = None
-
-            with tf.Session() as session:
-                session.run(tf.global_variables_initializer())
-                session.run(tf.tables_initializer())
-                sentence_vectors = encode_sentences(session, self.input_placeholder, messages, self.sp, self.encodings)
-
-            # print("Correlation between '{}' and '{}'".format(sentence_vectors[0][0], sentence_vectors[1][0]))
-            # print(np.inner(sentence_vectors[0][1], sentence_vectors[1][1]))
-
+            sentence_vectors = encode_sentences(self.session, self.input_placeholder, messages, self.sp, self.encodings)
             return np.inner(sentence_vectors[0][1], sentence_vectors[1][1])
 
         except Exception as e:
@@ -101,29 +97,10 @@ class TfSimilarity:
 
         return None
 
-    # ---
-    # Returns the phrase in phrase_list that most similar to new_phrase
-    # ---
-    def match_similarity_with_list(self, new_phrase, phrase_list):
-        highest_score = -1
-        best_phrase = None
-
-        for candidate_phrase in phrase_list:
-            score = self.get_similarity(new_phrase, candidate_phrase)
-            if score > highest_score:
-                highest_score = score
-                best_phrase = candidate_phrase
-
-        return best_phrase
-
 
 # Example usage:
 
-# tfs = TfSimilarity()
+#tfs = TfSimilarity()
 
-# print( tfs.get_similarity('I am string 1', 'I am string 2') )
+#print( tfs.get_similarity('I am string 1', 'I am string 2') )
 #  = 0.97 (i.e. 97% correlation)
-
-# example_sentences = ['I am a big lego', 'Jump over the ocean', 'I am also a dog', 'Wow look at the sun']
-# print( tfs.match_similarity_with_list('I am a dog', example_sentences) )
-#  = 'I am also a dog'

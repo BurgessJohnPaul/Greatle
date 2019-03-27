@@ -1,0 +1,4 @@
+To start server:
+FLASK_APP=sim_server.py flask run
+
+Server will default to localhost:5000

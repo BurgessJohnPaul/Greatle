@@ -30,16 +30,8 @@ logger.setLevel(logging.INFO)
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('Greatle_Users')
 GOAL_TO_DELETE_SESSION_ATTRIBUTE = "goal_to_delete"
-LAST_QUERY_SESSION_ATTRIBUTE = "last_query"
 card_title = 'Henry by Greatle'
 
-discovery = DiscoveryV1(
-    version='2018-12-03',
-    iam_apikey='Z5qjSJAEOoxr29_cq2AB2YhDasgd0zKkCQAEBvlTdkLf',
-    url='https://gateway-wdc.watsonplatform.net/discovery/api'
-)
-environment_id = "a9e5ef42-6ee3-4b5b-8dbe-ea6c0fce0556"
-collection_id = "71f0df80-85e0-48f5-bc76-b5d9eac1ac9e"
 
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
@@ -99,24 +91,23 @@ class AdviceIntentHandler(AbstractRequestHandler):
         print(slots)
         keywords = slots['AdviceTopic'].value
         print(keywords)
-
+        discovery = DiscoveryV1(
+            version='2018-12-03',
+            iam_apikey='Z5qjSJAEOoxr29_cq2AB2YhDasgd0zKkCQAEBvlTdkLf',
+            url='https://gateway-wdc.watsonplatform.net/discovery/api'
+        )
+        environment_id = "a9e5ef42-6ee3-4b5b-8dbe-ea6c0fce0556"
+        collection_id = "71f0df80-85e0-48f5-bc76-b5d9eac1ac9e"
         query = discovery.query(environment_id, collection_id, natural_language_query=keywords, passages=True, passages_characters=500)
         print(json.dumps(query.get_result(), indent=4, sort_keys=True))
         if query.get_result()['matching_results'] > 0:
             sentences = get_passages(query.get_result()["passages"], keywords)
             if len(sentences) > 0:
                 speech_text = sentences[random.randint(0, len(sentences) - 1)]
-                if handler_input.request_envelope.session.attributes is None:
-                    handler_input.attributes_manager.session_attributes = \
-                        {LAST_QUERY_SESSION_ATTRIBUTE: keywords}
-                else:
-                    handler_input.attributes_manager.session_attributes[LAST_QUERY_SESSION_ATTRIBUTE] = keywords
             else:
                 speech_text = 'I could not find any results.'
         else:
             speech_text = 'I was unable to find anything on that subject.'
-
-        speech_text = "<speak>" + speech_text + "<break time='2s'/> Was that helpful?" + "</speak>"
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard(card_title, speech_text)).set_should_end_session(
             False)
@@ -336,9 +327,6 @@ class YesIntentHandler(AbstractRequestHandler):
                 GOAL_TO_DELETE_SESSION_ATTRIBUTE])
             speech_text = "Okay, I deleted that goal"
             handler_input.request_envelope.session.attributes.pop(GOAL_TO_DELETE_SESSION_ATTRIBUTE, None)
-        elif handler_input.request_envelope.session.attributes is not None and LAST_QUERY_SESSION_ATTRIBUTE in handler_input.request_envelope.session.attributes:
-            speech_text = "The last query was " + handler_input.request_envelope.session.attributes[
-                LAST_QUERY_SESSION_ATTRIBUTE]
         else:
             speech_text = "Sorry, I am unsure why you said yes. Please start your intent over."
 
@@ -353,8 +341,6 @@ class NoIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         if handler_input.request_envelope.session.attributes is not None and GOAL_TO_DELETE_SESSION_ATTRIBUTE in handler_input.request_envelope.session.attributes:
             speech_text = "Okay, I will not delete that goal"
-        elif handler_input.request_envelope.session.attributes is not None and LAST_QUERY_SESSION_ATTRIBUTE in handler_input.request_envelope.session.attributes:
-            speech_text = "I am sorry you did not like that advice."
         else:
             speech_text = "Sorry, I am unsure why you said no. Please start your intent over."
 

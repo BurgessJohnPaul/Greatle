@@ -9,7 +9,9 @@ def get_similarity(str1, str2):
         data = {'phrase1': str1, 'phrase2': str2}
         response = requests.get('http://127.0.0.1:5000/gs', data=data)
         return response.content
-    except Exception:
+    except Exception as e:
+        print('Similarity helper error:')
+        print(e)
         return None
 
 
@@ -21,8 +23,12 @@ def match_similarity_with_list(new_phrase, phrase_list):
         l = [(phrase, get_similarity(new_phrase, phrase)) for phrase in phrase_list]
         l = sorted(l, key=lambda x:x[1], reverse=True)
         return l
-    except Exception:
+    except Exception as e:
+        print('Similarity helper error:')
+        print(e)
         return None
 
 
-print(match_similarity_with_list('taco', ['big taco', 'big cat']))
+# Example
+if __name__ == '__main__':
+    print(match_similarity_with_list('taco', ['big taco', 'big cat']))

@@ -1,5 +1,6 @@
 import requests
 
+
 # ---
 # Returns the semantic similarity between str1 and str2 as a decimal between 0 and 1
 # ---
@@ -10,6 +11,7 @@ def get_similarity(str1, str2):
         return response.content
     except Exception:
         return None
+
 
 # ---
 # Returns the similarity of a phrase to a list of phrases
@@ -23,5 +25,4 @@ def match_similarity_with_list(new_phrase, phrase_list):
         return None
 
 
-x = match_similarity_with_list('that big truck over there', ['big fat cat', 'fat chungus'])
-print(x)
+print(match_similarity_with_list('taco', ['big taco', 'big cat']))

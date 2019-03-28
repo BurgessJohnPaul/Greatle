@@ -2,10 +2,6 @@ import random
 import dynamo_helper
 import language_helper
 from time import strftime
-import sys
-
-# Dynamically load similarity_helper because its in a different folder
-sys.path.append('./similarity_server')
 import similarity_helper
 
 

@@ -87,6 +87,9 @@ class TfSimilarity:
     # ---
     def get_similarity(self, str1, str2):
         try:
+            print('get_similarity called')
+            print('str1:', str1)
+            print('str2:', str2)
             messages = [str1, str2]
             sentence_vectors = encode_sentences(self.session, self.input_placeholder, messages, self.sp, self.encodings)
             return np.inner(sentence_vectors[0][1], sentence_vectors[1][1])

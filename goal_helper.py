@@ -1,8 +1,13 @@
 import random
-
 import dynamo_helper
 import language_helper
 from time import strftime
+import sys
+
+# Dynamically load similarity_helper because its in a different folder
+sys.path.append('./similarity_server')
+import similarity_helper
+
 
 DATE_FORMAT = "%Y-%m-%d"
 NO_DATE = "NO_DATE"
@@ -96,9 +101,17 @@ def complete_goal_helper(user_id, slots):
         if len(goal_list) == 0:
             speech_text = "Sorry you do not have any active goals to complete"
         else:
-            most_similar_string, similar_value = language_helper.get_most_similar_string(slots['Goal'].value, goal_list)
-            print("Most similar string: ", most_similar_string)
-            print("Similarity value: ", similar_value)
+            # If you can connect to tensor flow model use that, otherwise use language_helper
+            similarity_list = similarity_helper.match_similarity_with_list(slots['Goal'].value, goal_list)
+            if similarity_list is not None and similarity_list[0][0] is not None and similarity_list[0][1] is not None:
+                print("Using similarity server")
+                most_similar_string = similarity_list[0][0]
+                similar_value = similarity_list[0][1]
+            else:
+                most_similar_string, similar_value = language_helper.get_most_similar_string(slots['Goal'].value, goal_list)
+                print("Most similar string: ", most_similar_string)
+                print("Similarity value: ", similar_value)
+
             # Check here right now just in case we dont want to return something if they say something that is not like
             # one of their goals
             if similar_value >= 0.7:

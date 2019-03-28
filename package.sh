@@ -1,8 +1,7 @@
 #!/bin/bash
 mkdir package
 cd package
-pcregrep -M 'BEGIN(.|\n)*?END' ../requirements.txt > ../lambda_reqs.txt
-pip3 install -r ../lambda_reqs.txt --target .
+pip3 install -r ../requirements.txt --target .
 zip -r9 ../function.zip .
 cd ../
 zip -g function.zip similarity_helper.py

@@ -388,7 +388,7 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
     def handle(self, handler_input, exception):
         # type: (HandlerInput, Exception) -> Response
         logger.error(exception, exc_info=True)
-
+        print(exception)
         speech = "Sorry, there was some problem. Please try again!!"
         handler_input.response_builder.speak(speech).ask(speech)
 

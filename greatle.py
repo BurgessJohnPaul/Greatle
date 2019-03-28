@@ -104,6 +104,7 @@ class AdviceIntentHandler(AbstractRequestHandler):
             sentences = get_passages(query.get_result()["passages"], keywords)
             if len(sentences) > 0:
                 speech_text = sentences[random.randint(0, len(sentences) - 1)]
+                speech_text = "<speak>" + speech_text + "<break time='2s'/> Was that helpful?" + "</speak>"
             else:
                 speech_text = 'I could not find any results.'
         else:

@@ -247,7 +247,7 @@ class HelpIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         speech_text = "I can give you life advice. You can ask me for advice by saying something like 'I want advice" \
                       " about love'. I can also help you manage your goals. Say 'goal help' to learn more. If you want"\
-                      "to learn about my other features, like drunk mode, say 'other help' like other"
+                      " to learn about my other features, like drunk mode, say 'other help'."
 
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard(card_title, speech_text)).set_should_end_session(
@@ -259,7 +259,7 @@ class GoalHelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
-        return is_intent_name("GoalHelpGoalIntent")(handler_input)
+        return is_intent_name("GoalHelpIntent")(handler_input)
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response

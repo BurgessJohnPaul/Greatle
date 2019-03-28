@@ -7,7 +7,7 @@ import requests
 def get_similarity(str1, str2):
     try:
         data = {'phrase1': str1, 'phrase2': str2}
-        response = requests.get('http://127.0.0.1:5000/gs', data=data)
+        response = requests.get('https://greatle.localtunnel.me/gs', data=data)
         return response.content
     except Exception as e:
         print('Similarity helper error:')

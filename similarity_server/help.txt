@@ -1,4 +1,12 @@
-To start server:
+How to start server (localhost:5000):
+-------------------------------------
 FLASK_APP=sim_server.py flask run
 
-Server will default to localhost:5000
+
+How to expose localhost to the world:
+-------------------------------------
+Use https://github.com/localtunnel/localtunnel to make tunnel to localhost
+Download:
+npm install -g localtunnel
+Open tunnel:
+lt --port 5000 --subdomain greatle

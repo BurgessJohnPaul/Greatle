@@ -6,6 +6,7 @@ import logging
 import boto3
 import dynamo_helper
 import goal_helper
+import discovery_helper
 import random
 import json
 
@@ -92,17 +93,9 @@ class AdviceIntentHandler(AbstractRequestHandler):
         print(slots)
         keywords = slots['AdviceTopic'].value
         print(keywords)
-        discovery = DiscoveryV1(
-            version='2018-12-03',
-            iam_apikey='Z5qjSJAEOoxr29_cq2AB2YhDasgd0zKkCQAEBvlTdkLf',
-            url='https://gateway-wdc.watsonplatform.net/discovery/api'
-        )
-        environment_id = "a9e5ef42-6ee3-4b5b-8dbe-ea6c0fce0556"
-        collection_id = "71f0df80-85e0-48f5-bc76-b5d9eac1ac9e"
-        query = discovery.query(environment_id, collection_id, natural_language_query=keywords, passages=True, passages_characters=500)
-        print(json.dumps(query.get_result(), indent=4, sort_keys=True))
+        query = discovery_helper.query(keywords)
         if query.get_result()['matching_results'] > 0:
-            sentences = get_passages(query.get_result()["passages"], keywords)
+            sentences = query.get_result()["passages"]
             if len(sentences) > 0:
                 speech_text = sentences[random.randint(0, len(sentences) - 1)]
                 speech_text = "<speak>" + speech_text + "<break time='2s'/> Was that helpful?" + "</speak>"

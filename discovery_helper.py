@@ -29,6 +29,6 @@ def getDiscovery():
 def query(keywords):
     discovery = getDiscovery()
     query = discovery.query(environment_id, collection_id, natural_language_query=keywords, passages=True,
-                            passages_characters=500)
+                            passages_fields='Quote')
     print(json.dumps(query.get_result(), indent=4, sort_keys=True))
     return query

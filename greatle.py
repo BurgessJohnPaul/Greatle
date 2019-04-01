@@ -329,12 +329,12 @@ class YesIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         user_id = handler_input.request_envelope.session.user.user_id[18:]
-        if handler_input.request_envelope.session.attributes is not None and GOAL_TO_DELETE_SESSION_ATTRIBUTE in handler_input.request_envelope.session.attributes:
+        if handler_input.request_envelope.session.attributes is not None and \
+                handler_input.request_envelope.session.attributes.get(GOAL_TO_DELETE_SESSION_ATTRIBUTE) is not None:
             dynamo_helper.delete_goal(user_id, handler_input.request_envelope.session.attributes[
                 GOAL_TO_DELETE_SESSION_ATTRIBUTE])
-            del handler_input.request_envelope.session.attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE]
+            handler_input.attributes_manager.session_attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE] = None
             speech_text = "Okay, I deleted that goal"
-            #handler_input.request_envelope.session.attributes.pop(GOAL_TO_DELETE_SESSION_ATTRIBUTE, None)
         elif handler_input.request_envelope.session.attributes is not None and LAST_QUERY_SESSION_ATTRIBUTE in handler_input.request_envelope.session.attributes:
             speech_text = "The last query was " + handler_input.request_envelope.session.attributes[
                 LAST_QUERY_SESSION_ATTRIBUTE]

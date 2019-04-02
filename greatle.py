@@ -86,8 +86,7 @@ class AdviceIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        if handler_input.request_envelope.session.attributes is None:
-            handler_input.attributes_manager.session_attributes = {}
+        print('session attributes:', handler_input.attributes_manager.session_attributes)
         print("Advice called")
         slots = handler_input.request_envelope.request.intent.slots
         print(slots)
@@ -101,10 +100,8 @@ class AdviceIntentHandler(AbstractRequestHandler):
             speech_text = "<speak>" + speech_text + "<break time='2s'/> Was that helpful?" + "</speak>"
             handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = queryId
             print('session attributes:', handler_input.attributes_manager.session_attributes)
-            print('session attributes envelope:', handler_input.request_envelope.session.attributes)
             handler_input.attributes_manager.session_attributes[LAST_DOCUMENT_ID_SESSION_ATTRIBUTE] = docId
             print('session attributes:', handler_input.attributes_manager.session_attributes)
-            print('session attributes envelope:', handler_input.request_envelope.session.attributes)
         else:
             speech_text = 'I was unable to find anything on that subject.'
         handler_input.response_builder.speak(speech_text).set_card(
@@ -146,8 +143,6 @@ class DeleteGoalIntentHandler(AbstractRequestHandler):
             SimpleCard(card_title, speech_text)).set_should_end_session(
             False)
 
-        if handler_input.request_envelope.session.attributes is None:
-            handler_input.attributes_manager.session_attributes = {}
         handler_input.attributes_manager.session_attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE] = goal_description
         return handler_input.response_builder.response
 

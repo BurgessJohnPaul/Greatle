@@ -19,7 +19,6 @@ from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_model.ui import SimpleCard
 from ask_sdk_model import Response
 
-from watson_developer_cloud import DiscoveryV1
 
 from language_helper import get_passages
 
@@ -32,8 +31,15 @@ dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('Greatle_Users')
 GOAL_TO_DELETE_SESSION_ATTRIBUTE = "goal_to_delete"
 LAST_QUERY_SESSION_ATTRIBUTE = "last_query"
+LAST_QUERY_ID_SESSION_ATTRIBUTE = "last_query_id"
 card_title = 'Henry by Greatle'
 
+def addSessionAttribute(handler_input, attribute, value):
+    if handler_input.request_envelope.session.attributes is None:
+        handler_input.attributes_manager.session_attributes = \
+            {attribute: value}
+    else:
+        handler_input.attributes_manager.session_attributes[attribute] = value
 
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
@@ -96,12 +102,9 @@ class AdviceIntentHandler(AbstractRequestHandler):
         query = discovery_helper.query(keywords)
         if query.get_result()['matching_results'] > 0:
             speech_text = query.get_result()["passages"][0]['passage_text']
+            #docId = query.get_result()["passages"][0]['document_id']
             speech_text = "<speak>" + speech_text + "<break time='2s'/> Was that helpful?" + "</speak>"
-            if handler_input.request_envelope.session.attributes is None:
-                handler_input.attributes_manager.session_attributes = \
-                    {LAST_QUERY_SESSION_ATTRIBUTE: keywords}
-            else:
-                handler_input.attributes_manager.session_attributes[LAST_QUERY_SESSION_ATTRIBUTE] = keywords
+            addSessionAttribute(handler_input, LAST_QUERY_SESSION_ATTRIBUTE, keywords)
         else:
             speech_text = 'I was unable to find anything on that subject.'
         handler_input.response_builder.speak(speech_text).set_card(

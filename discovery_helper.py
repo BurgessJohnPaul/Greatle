@@ -31,6 +31,9 @@ def query(keywords):
     query = discovery.query(ENVIRONMENT, COLLECTION, natural_language_query=keywords, passages=True,
                             passages_fields='Quote')
 
+    if(query.get_result()['matching_results'] == 0):
+        return None
+
     trainingData = discovery.list_training_data(ENVIRONMENT, COLLECTION)
     queryId = hasQuery(trainingData, keywords)
     if (queryId is None):

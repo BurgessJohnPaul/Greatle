@@ -33,12 +33,34 @@ def query(keywords):
 
     trainingData = discovery.list_training_data(ENVIRONMENT, COLLECTION)
     queryId = hasQuery(trainingData, keywords)
-    if(queryId is None):
+    if (queryId is None):
         trainQuery = discovery.add_training_data(ENVIRONMENT, COLLECTION, natural_language_query=keywords)
         queryId = trainQuery.get_result()['query_id']
     print(json.dumps(query.get_result(), indent=4))
     print('query id:', queryId)
-    return query, queryId
+
+    result = None
+    for i in range(query.get_result()['matching_results']):
+        result = query.get_result()['passages'][i]
+        print(result['passage_text'])
+        docId = result['document_id']
+
+        examples = discovery.list_training_examples(ENVIRONMENT, COLLECTION, queryId)
+
+        if(hasDocument(examples, docId)):
+            trainingExample = discovery.get_training_example(ENVIRONMENT, COLLECTION, queryId, docId)
+            relevance = trainingExample.get_result()['relevance']
+            print(trainingExample.get_result()['relevance'])
+            print('relevance:', relevance)
+            if relevance > 0:
+                break
+        else:
+            break
+
+    if result is None:
+        return None
+    else:
+        return result['passage_text'], result['document_id'], queryId
 
 def hasQuery(trainingData, word):
     for query in trainingData.get_result()['queries']:

@@ -93,11 +93,14 @@ class AdviceIntentHandler(AbstractRequestHandler):
         keywords = slots['AdviceTopic'].value
         print(keywords)
         handler_input.attributes_manager.session_attributes[LAST_QUERY_SESSION_ATTRIBUTE] = keywords
-        query, queryId = discovery_helper.query(keywords)
-        if query.get_result()['matching_results'] > 0:
-            speech_text = query.get_result()["passages"][0]['passage_text']
-            docId = query.get_result()["passages"][0]['document_id']
-            speech_text = "<speak>" + speech_text + "<break time='2s'/> Was that helpful?" + "</speak>"
+        queryResults = discovery_helper.query(keywords)
+        print('query results:', queryResults)
+        if queryResults is not None:
+            passage = queryResults[0]
+            docId = queryResults[1]
+            queryId = queryResults[2]
+
+            speech_text = "<speak>" + passage + "<break time='2s'/> Was that helpful?" + "</speak>"
             handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = queryId
             print('session attributes:', handler_input.attributes_manager.session_attributes)
             handler_input.attributes_manager.session_attributes[LAST_DOCUMENT_ID_SESSION_ATTRIBUTE] = docId

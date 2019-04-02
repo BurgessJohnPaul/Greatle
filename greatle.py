@@ -59,10 +59,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
             speech_text = "Hello, welcome to Greatle. I am here to give you encouragement, advice, and help set and maintain goals. How may I assist you?"
             dynamo_helper.put_item_to_users(user_id)
 
-        handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard(card_title, speech_text)).set_should_end_session(
-            False)
-        return handler_input.response_builder.response
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class UpdateNameIntentHandler(AbstractRequestHandler):
@@ -75,8 +72,7 @@ class UpdateNameIntentHandler(AbstractRequestHandler):
         name = slots['Name'].value
         dynamo_helper.update_name_from_users(user_id, name)
         speech_text = "Okay, I will call you " + name + " from now on"
-        handler_input.response_builder.speak(speech_text).set_card(SimpleCard(card_title, speech_text)).set_should_end_session(False)
-        return handler_input.response_builder.response
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class AdviceIntentHandler(AbstractRequestHandler):
@@ -108,10 +104,8 @@ class AdviceIntentHandler(AbstractRequestHandler):
             print('session attributes:', handler_input.attributes_manager.session_attributes)
         else:
             speech_text = 'I was unable to find anything on that subject.'
-        handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard(card_title, speech_text)).set_should_end_session(
-            False)
-        return handler_input.response_builder.response
+
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class CreateGoalIntentHandler(AbstractRequestHandler):
@@ -128,10 +122,7 @@ class CreateGoalIntentHandler(AbstractRequestHandler):
 
         speech_text = goal_helper.create_goal_helper(user_id, slots)
 
-        handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard(card_title, speech_text)).set_should_end_session(
-            False)
-        return handler_input.response_builder.response
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class DeleteGoalIntentHandler(AbstractRequestHandler):
@@ -143,12 +134,9 @@ class DeleteGoalIntentHandler(AbstractRequestHandler):
         slots = handler_input.request_envelope.request.intent.slots
 
         speech_text, goal_description = goal_helper.retrieve_goal_to_delete_helper(user_id, slots)
-        handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard(card_title, speech_text)).set_should_end_session(
-            False)
-
         handler_input.attributes_manager.session_attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE] = goal_description
-        return handler_input.response_builder.response
+
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class CompleteGoalIntentHandler(AbstractRequestHandler):
@@ -161,11 +149,7 @@ class CompleteGoalIntentHandler(AbstractRequestHandler):
 
         speech_text = goal_helper.complete_goal_helper(user_id, slots)
 
-        handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard(card_title, speech_text)).set_should_end_session(
-            False)
-
-        return handler_input.response_builder.response
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class RetrieveGoalIntentHandler(AbstractRequestHandler):
@@ -182,10 +166,7 @@ class RetrieveGoalIntentHandler(AbstractRequestHandler):
 
         speech_text = goal_helper.retrieve_goal_helper(user_id)
 
-        handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard(card_title, speech_text)).set_should_end_session(
-            False)
-        return handler_input.response_builder.response
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class ListGoalIntentHandler(AbstractRequestHandler):
@@ -202,10 +183,7 @@ class ListGoalIntentHandler(AbstractRequestHandler):
 
         speech_text = goal_helper.list_goal_helper(user_id)
 
-        handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard(card_title, speech_text)).set_should_end_session(
-            False)
-        return handler_input.response_builder.response
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class ListCompletedGoalIntentHandler(AbstractRequestHandler):
@@ -237,10 +215,7 @@ class HelpIntentHandler(AbstractRequestHandler):
                       " about love'. I can also help you manage your goals. Say 'goal help' to learn more. If you want"\
                       " to learn about my other features, like drunk mode, say 'other help'."
 
-        handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard(card_title, speech_text)).set_should_end_session(
-            False)
-        return handler_input.response_builder.response
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class GoalHelpIntentHandler(AbstractRequestHandler):
@@ -257,10 +232,7 @@ class GoalHelpIntentHandler(AbstractRequestHandler):
                       "'Delete my goal to meet Hillary Clinton'. You can ask me about your goals by saying 'List" \
                       " my goals' or 'List my completed goals.'"
 
-        handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard(card_title, speech_text)).set_should_end_session(
-            False)
-        return handler_input.response_builder.response
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class OtherHelpIntentHandler(AbstractRequestHandler):
@@ -274,10 +246,7 @@ class OtherHelpIntentHandler(AbstractRequestHandler):
         speech_text = "You can say 'turn on drunk mode' to make me talk differently. If you want me to tell you a " \
                       "story, you can say 'tell me a koan.'"
 
-        handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard(card_title, speech_text)).set_should_end_session(
-            False)
-        return handler_input.response_builder.response
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class TurnOnDrunkModeHandler(AbstractRequestHandler):
@@ -326,9 +295,7 @@ class CancelOrStopIntentHandler(AbstractRequestHandler):
 
         speech_text = random.choice(response_options)
 
-        handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard(card_title, speech_text))
-        return handler_input.response_builder.response
+        return speech_helper.build_response(handler_input, card_title, speech_text, True)
 
 
 class YesIntentHandler(AbstractRequestHandler):
@@ -354,8 +321,7 @@ class YesIntentHandler(AbstractRequestHandler):
         else:
             speech_text = "Sorry, I am unsure why you said yes. Please start your intent over."
 
-        handler_input.response_builder.speak(speech_text).set_should_end_session(False)
-        return handler_input.response_builder.response
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class NoIntentHandler(AbstractRequestHandler):
@@ -375,8 +341,7 @@ class NoIntentHandler(AbstractRequestHandler):
         else:
             speech_text = "Sorry, I am unsure why you said no. Please start your intent over."
 
-        handler_input.response_builder.speak(speech_text).set_should_end_session(False)
-        return handler_input.response_builder.response
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class FallbackIntentHandler(AbstractRequestHandler):
@@ -391,10 +356,7 @@ class FallbackIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         speech_text = "I don't understand your command. Say 'help' for a list of commands."
-        handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard(card_title, speech_text)).set_should_end_session(
-            False)
-        return handler_input.response_builder.response
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class SessionEndedRequestHandler(AbstractRequestHandler):

@@ -1,22 +1,18 @@
 from watson_developer_cloud import DiscoveryV1
+from multiprocessing import Process, Pipe
 import json
 import random
 
+from language_helper import get_passages
+
 ENVIRONMENT = None
 COLLECTION = None
+ENVIRONMENT_2 = None
+COLLECTION_2 = None
+
 
 def getDiscovery():
     global ENVIRONMENT, COLLECTION
-    '''
-    #john's discovery
-    environment_id = "a9e5ef42-6ee3-4b5b-8dbe-ea6c0fce0556"
-    collection_id = "71f0df80-85e0-48f5-bc76-b5d9eac1ac9e"
-    return DiscoveryV1(
-        version='2018-12-03',
-        iam_apikey='Z5qjSJAEOoxr29_cq2AB2YhDasgd0zKkCQAEBvlTdkLf',
-        url='https://gateway-wdc.watsonplatform.net/discovery/api'
-    )
-    '''
     #joseph's discovery
     ENVIRONMENT = "45b1c136-c499-42dd-be4a-acfe78aede82"
     COLLECTION = "e7d71852-3174-498f-be16-e72f71fb768d"
@@ -27,13 +23,30 @@ def getDiscovery():
     )
 
 
+def getDiscovery_2():
+    global ENVIRONMENT_2, COLLECTION_2
+    #john's discovery
+    ENVIRONMENT_2 = "a9e5ef42-6ee3-4b5b-8dbe-ea6c0fce0556"
+    COLLECTION_2 = "fc628c92-35e7-4ca1-890c-d515f1ab7b4f"
+    return DiscoveryV1(
+        version='2018-12-03',
+        iam_apikey='Z5qjSJAEOoxr29_cq2AB2YhDasgd0zKkCQAEBvlTdkLf',
+        url='https://gateway-wdc.watsonplatform.net/discovery/api'
+    )
+
+
 def query(keywords):
+    conn1, conn2 = Pipe(False)
+    process = Process(target=query_2, args=[conn2, keywords])
+    process.start()
     discovery = getDiscovery()
     query = discovery.query(ENVIRONMENT, COLLECTION, natural_language_query=keywords, passages=True,
                             passages_fields='Quote')
 
-    if(query.get_result()['matching_results'] == 0):
-        return None
+    if query.get_result()['matching_results'] == 0:
+        result = conn1.recv()
+        process.join()
+        return result
 
     trainingData = discovery.list_training_data(ENVIRONMENT, COLLECTION)
     queryId = hasQuery(trainingData, keywords)
@@ -60,10 +73,21 @@ def query(keywords):
         else:
             break
 
-    if result is None:
-        return None
-    else:
-        return result['passage_text'], result['document_id'], queryId
+    process.join()
+    return None if result is None else (result['passage_text'], result['document_id'], queryId)
+
+
+def query_2(conn, keywords):
+    discovery = getDiscovery_2()
+    query = discovery.query(ENVIRONMENT_2, COLLECTION_2, natural_language_query=keywords, passages=True, passages_characters=350, passages_count=7)
+    result = None
+    if(query.get_result()['matching_results'] > 0):
+        sentences = get_passages(query.get_result()["passages"])
+        if len(sentences) > 0:
+            result = sentences[random.randint(0, len(sentences) - 1)]
+    conn.send(None if result is None else result)
+    conn.close()
+
 
 def hasQuery(trainingData, word):
     for query in trainingData.get_result()['queries']:

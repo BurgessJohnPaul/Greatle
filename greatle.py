@@ -96,7 +96,7 @@ class AdviceIntentHandler(AbstractRequestHandler):
         handler_input.attributes_manager.session_attributes[LAST_QUERY_SESSION_ATTRIBUTE] = keywords
         queryResults = discovery_helper.query(keywords)
         print('query results:', queryResults)
-        if queryResults is not None:
+        if queryResults is not None and isinstance(queryResults, (tuple, list)):
             passage = queryResults[0]
             docId = queryResults[1]
             queryId = queryResults[2]
@@ -106,6 +106,8 @@ class AdviceIntentHandler(AbstractRequestHandler):
             print('session attributes:', handler_input.attributes_manager.session_attributes)
             handler_input.attributes_manager.session_attributes[LAST_DOCUMENT_ID_SESSION_ATTRIBUTE] = docId
             print('session attributes:', handler_input.attributes_manager.session_attributes)
+        elif queryResults is not None and isinstance(queryResults, str):
+            speech_text = queryResults
         else:
             speech_text = 'I was unable to find anything on that subject.'
 

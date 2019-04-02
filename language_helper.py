@@ -17,17 +17,15 @@ def get_most_similar_string(goal_string, string_list):
     return best_string, similarity_value
 
 
-def get_quote(raw_str, keyword):
-    is_relevant = lambda quote: keyword in quote.lower()
+def get_quote(raw_str):
     quotes = re.findall('\^(.*?)_', raw_str)
-    quotes = list(filter(is_relevant, quotes))
     return quotes if len(quotes) > 0 else None
 
 
-def get_passages(raw_list, keyword):
+def get_passages(raw_list):
     passages = []
     for raw in raw_list:
-        quotes = get_quote(re.sub(r'<.*>', '', raw["passage_text"]), keyword)
+        quotes = get_quote(re.sub(r'<.*>', '', raw["passage_text"]))
         if quotes is not None:
             [passages.append(quote) for quote in quotes]
     return passages

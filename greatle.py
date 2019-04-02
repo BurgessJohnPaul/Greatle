@@ -52,7 +52,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
         response = dynamo_helper.get_item_from_users(user_id)
 
         if 'Item' in response:
-            if 'user_name' in response['Item']:
+            if 'user_name' in response['Item'] and response['Item']['user_name'] is not None:
                 speech_text = "Hello, welcome back " + response['Item']['user_name'] + "! How may I assist you?"
             else:
                 speech_text = "Hello, welcome back! How may I assist you?"

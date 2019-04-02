@@ -32,6 +32,7 @@ table = dynamodb.Table('Greatle_Users')
 GOAL_TO_DELETE_SESSION_ATTRIBUTE = "goal_to_delete"
 LAST_QUERY_SESSION_ATTRIBUTE = "last_query"
 LAST_QUERY_ID_SESSION_ATTRIBUTE = "last_query_id"
+LAST_DOCUMENT_ID_SESSION_ATTRIBUTE = "last_document_id"
 card_title = 'Henry by Greatle'
 
 def addSessionAttribute(handler_input, attribute, value):
@@ -99,12 +100,14 @@ class AdviceIntentHandler(AbstractRequestHandler):
         print(slots)
         keywords = slots['AdviceTopic'].value
         print(keywords)
-        query = discovery_helper.query(keywords)
+        addSessionAttribute(handler_input, LAST_QUERY_SESSION_ATTRIBUTE, keywords)
+        query, queryId = discovery_helper.query(keywords)
         if query.get_result()['matching_results'] > 0:
             speech_text = query.get_result()["passages"][0]['passage_text']
-            #docId = query.get_result()["passages"][0]['document_id']
+            docId = query.get_result()["passages"][0]['document_id']
             speech_text = "<speak>" + speech_text + "<break time='2s'/> Was that helpful?" + "</speak>"
-            addSessionAttribute(handler_input, LAST_QUERY_SESSION_ATTRIBUTE, keywords)
+            addSessionAttribute(handler_input, LAST_QUERY_ID_SESSION_ATTRIBUTE, queryId)
+            addSessionAttribute(handler_input, LAST_DOCUMENT_ID_SESSION_ATTRIBUTE, docId)
         else:
             speech_text = 'I was unable to find anything on that subject.'
         handler_input.response_builder.speak(speech_text).set_card(
@@ -145,10 +148,8 @@ class DeleteGoalIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard(card_title, speech_text)).set_should_end_session(
             False)
-        if handler_input.request_envelope.session.attributes is None:
-            handler_input.attributes_manager.session_attributes = {GOAL_TO_DELETE_SESSION_ATTRIBUTE: goal_description}
-        else:
-            handler_input.attributes_manager.session_attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE] = goal_description
+
+        addSessionAttribute(handler_input, GOAL_TO_DELETE_SESSION_ATTRIBUTE, goal_description)
         return handler_input.response_builder.response
 
 
@@ -327,9 +328,14 @@ class YesIntentHandler(AbstractRequestHandler):
                 GOAL_TO_DELETE_SESSION_ATTRIBUTE])
             handler_input.attributes_manager.session_attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE] = None
             speech_text = "Okay, I deleted that goal"
-        elif handler_input.request_envelope.session.attributes is not None and LAST_QUERY_SESSION_ATTRIBUTE in handler_input.request_envelope.session.attributes:
-            speech_text = "The last query was " + handler_input.request_envelope.session.attributes[
-                LAST_QUERY_SESSION_ATTRIBUTE]
+        elif handler_input.request_envelope.session.attributes is not None and LAST_QUERY_ID_SESSION_ATTRIBUTE in handler_input.request_envelope.session.attributes:
+            #speech_text = "The last query was " + handler_input.request_envelope.session.attributes[
+            #    LAST_QUERY_SESSION_ATTRIBUTE]
+            speech_text = "Good. I'll record that."
+            discovery_helper.rateQuery(handler_input.request_envelope.session.attributes[
+                LAST_QUERY_ID_SESSION_ATTRIBUTE], handler_input.request_envelope.session.attributes[
+                LAST_DOCUMENT_ID_SESSION_ATTRIBUTE], relevant=True)
+            handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = None
         else:
             speech_text = "Sorry, I am unsure why you said yes. Please start your intent over."
 
@@ -344,8 +350,13 @@ class NoIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         if handler_input.request_envelope.session.attributes is not None and GOAL_TO_DELETE_SESSION_ATTRIBUTE in handler_input.request_envelope.session.attributes:
             speech_text = "Okay, I will not delete that goal"
-        elif handler_input.request_envelope.session.attributes is not None and LAST_QUERY_SESSION_ATTRIBUTE in handler_input.request_envelope.session.attributes:
-            speech_text = "I am sorry you did not like that advice."
+        elif handler_input.request_envelope.session.attributes is not None and LAST_QUERY_ID_SESSION_ATTRIBUTE in handler_input.request_envelope.session.attributes:
+            speech_text = "Sorry, I'll take note of that."
+            discovery_helper.rateQuery(handler_input.request_envelope.session.attributes[
+                                           LAST_QUERY_ID_SESSION_ATTRIBUTE],
+                                       handler_input.request_envelope.session.attributes[
+                                           LAST_DOCUMENT_ID_SESSION_ATTRIBUTE], relevant=False)
+            handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = None
         else:
             speech_text = "Sorry, I am unsure why you said no. Please start your intent over."
 

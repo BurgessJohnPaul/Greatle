@@ -36,6 +36,7 @@ LAST_QUERY_ID_SESSION_ATTRIBUTE = "last_query_id"
 LAST_DOCUMENT_ID_SESSION_ATTRIBUTE = "last_document_id"
 card_title = 'Henry by Greatle'
 
+
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
     def can_handle(self, handler_input):
@@ -58,6 +59,8 @@ class LaunchRequestHandler(AbstractRequestHandler):
         else:
             speech_text = "Hello, welcome to Greatle. I am here to give you encouragement, advice, and help set and maintain goals. How may I assist you?"
             dynamo_helper.put_item_to_users(user_id)
+
+        handler_input.attributes_manager.session_attributes["drunk_mode_state"] = dynamo_helper.get_drunk_mode_state(user_id)
 
         return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
@@ -254,8 +257,9 @@ class TurnOnDrunkModeHandler(AbstractRequestHandler):
         return is_intent_name("TurnOnDrunkModeIntent")(handler_input)
 
     def handle(self, handler_input):
+        user_id = handler_input.request_envelope.session.user.user_id[18:]
         speech_text = "Okay"
-        speech_helper.drunk_mode_active = True
+        speech_helper.set_drunk_mode(user_id, handler_input, True)
         return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
@@ -264,8 +268,9 @@ class TurnOffDrunkModeHandler(AbstractRequestHandler):
         return is_intent_name("TurnOffDrunkModeIntent")(handler_input)
 
     def handle(self, handler_input):
+        user_id = handler_input.request_envelope.session.user.user_id[18:]
         speech_text = "Fine"
-        speech_helper.drunk_mode_active = False
+        speech_helper.set_drunk_mode(user_id, handler_input, False)
         return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 

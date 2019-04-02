@@ -13,6 +13,7 @@ def get_row(user_id):
     )
     return response
 
+
 def set_col_val(user_id, col, val):
     table.update_item(
         Key={

@@ -274,6 +274,17 @@ class TurnOffDrunkModeHandler(AbstractRequestHandler):
         return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
+class SuicidePreventionIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return is_intent_name("SuicidePreventionIntent")(handler_input)
+
+    def handle(self, handler_input):
+        speech_text = "I may not be the smartest bot out there, however, if you are having thoughts of suicide, " \
+                      "please call the National Suicide Prevention Lifeline at 1-800-273-8255 (TALK) or go to " \
+                      "SpeakingOfSuicide.com/resources for a list of additional resources."
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
+
+
 class CancelOrStopIntentHandler(AbstractRequestHandler):
     """Single handler for Cancel and Stop Intent."""
     def can_handle(self, handler_input):
@@ -404,6 +415,7 @@ sb.add_request_handler(ListCompletedGoalIntentHandler())
 
 sb.add_request_handler(TurnOnDrunkModeHandler())
 sb.add_request_handler(TurnOffDrunkModeHandler())
+sb.add_request_handler(SuicidePreventionIntentHandler())
 
 sb.add_request_handler(GoalHelpIntentHandler())
 sb.add_request_handler(OtherHelpIntentHandler())

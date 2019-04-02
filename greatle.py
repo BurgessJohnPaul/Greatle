@@ -108,6 +108,7 @@ class AdviceIntentHandler(AbstractRequestHandler):
             speech_text = "<speak>" + speech_text + "<break time='2s'/> Was that helpful?" + "</speak>"
             addSessionAttribute(handler_input, LAST_QUERY_ID_SESSION_ATTRIBUTE, queryId)
             addSessionAttribute(handler_input, LAST_DOCUMENT_ID_SESSION_ATTRIBUTE, docId)
+            print(handler_input.attributes_manager.session_attributes)
         else:
             speech_text = 'I was unable to find anything on that subject.'
         handler_input.response_builder.speak(speech_text).set_card(

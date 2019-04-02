@@ -36,7 +36,8 @@ def query(keywords):
     if(queryId is None):
         trainQuery = discovery.add_training_data(ENVIRONMENT, COLLECTION, natural_language_query=keywords)
         queryId = trainQuery.get_result()['query_id']
-    print(json.dumps(query.get_result(), indent=4, sort_keys=True))
+    print(json.dumps(query.get_result(), indent=4))
+    print(queryId)
     return query, queryId
 
 def hasQuery(trainingData, word):

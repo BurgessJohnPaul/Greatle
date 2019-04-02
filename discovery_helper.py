@@ -1,5 +1,6 @@
 from watson_developer_cloud import DiscoveryV1
 import json
+import random
 
 ENVIRONMENT = None
 COLLECTION = None
@@ -43,8 +44,7 @@ def query(keywords):
     print('query id:', queryId)
 
     result = None
-    for i in range(query.get_result()['matching_results']):
-        result = query.get_result()['passages'][i]
+    for result in random.sample(query.get_result()['passages'], min(10, query.get_result()['matching_results'])):
         print(result['passage_text'])
         docId = result['document_id']
 

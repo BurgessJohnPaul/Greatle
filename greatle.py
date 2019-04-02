@@ -35,13 +35,6 @@ LAST_QUERY_ID_SESSION_ATTRIBUTE = "last_query_id"
 LAST_DOCUMENT_ID_SESSION_ATTRIBUTE = "last_document_id"
 card_title = 'Henry by Greatle'
 
-def addSessionAttribute(handler_input, attribute, value):
-    if handler_input.request_envelope.session.attributes is None:
-        handler_input.attributes_manager.session_attributes = \
-            {attribute: value}
-    else:
-        handler_input.attributes_manager.session_attributes[attribute] = value
-
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
     def can_handle(self, handler_input):
@@ -93,23 +86,25 @@ class AdviceIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-
-        #speech_text = "You are more capable than you imagine!"
+        if handler_input.request_envelope.session.attributes is None:
+            handler_input.attributes_manager.session_attributes = {}
         print("Advice called")
         slots = handler_input.request_envelope.request.intent.slots
         print(slots)
         keywords = slots['AdviceTopic'].value
         print(keywords)
-        addSessionAttribute(handler_input, LAST_QUERY_SESSION_ATTRIBUTE, keywords)
+        handler_input.attributes_manager.session_attributes[LAST_QUERY_SESSION_ATTRIBUTE] = keywords
         query, queryId = discovery_helper.query(keywords)
         if query.get_result()['matching_results'] > 0:
             speech_text = query.get_result()["passages"][0]['passage_text']
             docId = query.get_result()["passages"][0]['document_id']
             speech_text = "<speak>" + speech_text + "<break time='2s'/> Was that helpful?" + "</speak>"
-            addSessionAttribute(handler_input, LAST_QUERY_ID_SESSION_ATTRIBUTE, queryId)
+            handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = queryId
             print('session attributes:', handler_input.attributes_manager.session_attributes)
-            addSessionAttribute(handler_input, LAST_DOCUMENT_ID_SESSION_ATTRIBUTE, docId)
-            print(handler_input.attributes_manager.session_attributes)
+            print('session attributes envelope:', handler_input.request_envelope.session.attributes)
+            handler_input.attributes_manager.session_attributes[LAST_DOCUMENT_ID_SESSION_ATTRIBUTE] = docId
+            print('session attributes:', handler_input.attributes_manager.session_attributes)
+            print('session attributes envelope:', handler_input.request_envelope.session.attributes)
         else:
             speech_text = 'I was unable to find anything on that subject.'
         handler_input.response_builder.speak(speech_text).set_card(
@@ -151,7 +146,9 @@ class DeleteGoalIntentHandler(AbstractRequestHandler):
             SimpleCard(card_title, speech_text)).set_should_end_session(
             False)
 
-        addSessionAttribute(handler_input, GOAL_TO_DELETE_SESSION_ATTRIBUTE, goal_description)
+        if handler_input.request_envelope.session.attributes is None:
+            handler_input.attributes_manager.session_attributes = {}
+        handler_input.attributes_manager.session_attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE] = goal_description
         return handler_input.response_builder.response
 
 

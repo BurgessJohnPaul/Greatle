@@ -60,7 +60,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
             speech_text = "Hello, welcome to Greatle. I am here to give you encouragement, advice, and help set and maintain goals. How may I assist you?"
             dynamo_helper.put_item_to_users(user_id)
 
-        print("Get Drunk Mode Return: " + speech_helper.get_drunk_mode_state(user_id))
+        print("Get Drunk Mode Return: " + str(speech_helper.get_drunk_mode_state(user_id)))
         handler_input.attributes_manager.session_attributes["drunk_mode_state"] = speech_helper.get_drunk_mode_state(user_id)
 
         return speech_helper.build_response(handler_input, card_title, speech_text, False)

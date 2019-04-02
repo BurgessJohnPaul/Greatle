@@ -7,6 +7,7 @@ import boto3
 import dynamo_helper
 import goal_helper
 import discovery_helper
+import speech_helper
 import random
 import json
 
@@ -221,10 +222,7 @@ class ListCompletedGoalIntentHandler(AbstractRequestHandler):
 
         speech_text = goal_helper.list_completed_goal_helper(user_id)
 
-        handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard(card_title, speech_text)).set_should_end_session(
-            False)
-        return handler_input.response_builder.response
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class HelpIntentHandler(AbstractRequestHandler):
@@ -280,6 +278,26 @@ class OtherHelpIntentHandler(AbstractRequestHandler):
             SimpleCard(card_title, speech_text)).set_should_end_session(
             False)
         return handler_input.response_builder.response
+
+
+class TurnOnDrunkModeHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return is_intent_name("TurnOnDrunkModeIntent")(handler_input)
+
+    def handle(self, handler_input):
+        speech_text = "Okay"
+        speech_helper.drunk_mode_active = True
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
+
+
+class TurnOffDrunkModeHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return is_intent_name("TurnOffDrunkModeIntent")(handler_input)
+
+    def handle(self, handler_input):
+        speech_text = "Fine"
+        speech_helper.drunk_mode_active = False
+        return speech_helper.build_response(handler_input, card_title, speech_text, False)
 
 
 class CancelOrStopIntentHandler(AbstractRequestHandler):
@@ -416,6 +434,10 @@ sb.add_request_handler(RetrieveGoalIntentHandler())
 sb.add_request_handler(ListGoalIntentHandler())
 sb.add_request_handler(DeleteGoalIntentHandler())
 sb.add_request_handler(ListCompletedGoalIntentHandler())
+
+sb.add_request_handler(TurnOnDrunkModeHandler())
+sb.add_request_handler(TurnOffDrunkModeHandler())
+
 sb.add_request_handler(GoalHelpIntentHandler())
 sb.add_request_handler(OtherHelpIntentHandler())
 

@@ -98,15 +98,20 @@ def complete_goal_helper(user_id, slots):
             speech_text = "Sorry you do not have any active goals to complete"
         else:
             # If you can connect to tensor flow model use that, otherwise use language_helper
-            similarity_list = similarity_helper.match_similarity_with_list(slots['Goal'].value, goal_list)
-            if similarity_list is not None and similarity_list[0][0] is not None and similarity_list[0][1] is not None:
-                print("Using similarity server")
-                most_similar_string = similarity_list[0][0]
-                similar_value = similarity_list[0][1]
-            else:
-                most_similar_string, similar_value = language_helper.get_most_similar_string(slots['Goal'].value, goal_list)
-                print("Most similar string: ", most_similar_string)
-                print("Similarity value: ", similar_value)
+            # This is gross and should probably be made into its own method but ¯\_(ツ)_/¯
+            try:
+                similarity_list = similarity_helper.match_similarity_with_list(slots['Goal'].value, goal_list)
+                if similarity_list is not None and similarity_list[0][0] is not None and similarity_list[0][1] is not None:
+                    print("Using similarity server")
+                    most_similar_string = similarity_list[0][0]
+                    similar_value = similarity_list[0][1]
+                else:
+                    most_similar_string, similar_value = language_helper.get_most_similar_string(slots['Goal'].value, goal_list)
+                    print("Most similar string: ", most_similar_string)
+                    print("Similarity value: ", similar_value)
+            except Exception as e:
+                most_similar_string, similar_value = language_helper.get_most_similar_string(slots['Goal'].value,
+                                                                                             goal_list)
 
             # Check here right now just in case we dont want to return something if they say something that is not like
             # one of their goals
@@ -134,19 +139,23 @@ def retrieve_goal_to_delete_helper(user_id, slots):
             goal_description = None
         else:
             # If you can connect to tensor flow model use that, otherwise use language_helper
-            similarity_list = similarity_helper.match_similarity_with_list(slots['Goal'].value, goal_list)
-            if similarity_list is not None and similarity_list[0][0] is not None and similarity_list[0][1] is not None:
-                print("Using similarity server")
-                most_similar_string = similarity_list[0][0]
-                similar_value = similarity_list[0][1]
-            else:
-                most_similar_string, similar_value = language_helper.get_most_similar_string(slots['Goal'].value, goal_list)
-                print("Most similar string: ", most_similar_string)
-                print("Similarity value: ", similar_value)
+            try:
+                similarity_list = similarity_helper.match_similarity_with_list(slots['Goal'].value, goal_list)
+                if similarity_list is not None and similarity_list[0][0] is not None and similarity_list[0][1] is not None:
+                    print("Using similarity server")
+                    most_similar_string = similarity_list[0][0]
+                    similar_value = similarity_list[0][1]
+                else:
+                    most_similar_string, similar_value = language_helper.get_most_similar_string(slots['Goal'].value, goal_list)
+                    print("Most similar string: ", most_similar_string)
+                    print("Similarity value: ", similar_value)
+            except Exception as e:
+                most_similar_string, similar_value = language_helper.get_most_similar_string(slots['Goal'].value,
+                                                                                             goal_list)
 
             # Check here right now just in case we dont want to return something if they say something that is not like
             # one of their goals
-            if similar_value >= .7:
+            if similar_value >= 0.6:
                 speech_text = "Are you sure you want me to delete your goal to " + most_similar_string + "?"
                 goal_description = most_similar_string
             else:

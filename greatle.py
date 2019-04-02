@@ -97,7 +97,7 @@ class AdviceIntentHandler(AbstractRequestHandler):
             docId = queryResults[1]
             queryId = queryResults[2]
 
-            speech_text = "<speak>" + passage + "<break time='2s'/> Was that helpful?" + "</speak>"
+            speech_text = passage + "<break time='2s'/> Was that helpful?"
             handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = queryId
             print('session attributes:', handler_input.attributes_manager.session_attributes)
             handler_input.attributes_manager.session_attributes[LAST_DOCUMENT_ID_SESSION_ATTRIBUTE] = docId

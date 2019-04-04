@@ -252,8 +252,7 @@ class OtherHelpIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speech_text = "You can say 'turn on drunk mode' to make me talk differently. If you want me to tell you a " \
-                      "story, you can say 'tell me a koan.'"
+        speech_text = "You can say 'turn on drunk mode' to make me talk differently. If you want me to remember your name say something like call me Steven"
         card_text = speech_text
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text, False)
 

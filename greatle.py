@@ -10,18 +10,15 @@ import discovery_helper
 import speech_helper
 import random
 import json
+import string
 
 from ask_sdk_core.skill_builder import SkillBuilder
 from ask_sdk_core.dispatch_components import AbstractRequestHandler
 from ask_sdk_core.dispatch_components import AbstractExceptionHandler
 from ask_sdk_core.utils import is_request_type, is_intent_name
 from ask_sdk_core.handler_input import HandlerInput
-
-from ask_sdk_model.ui import SimpleCard
 from ask_sdk_model import Response
 
-
-from language_helper import get_passages
 
 sb = SkillBuilder()
 
@@ -74,7 +71,7 @@ class UpdateNameIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         user_id = handler_input.request_envelope.session.user.user_id[18:]
         slots = handler_input.request_envelope.request.intent.slots
-        name = slots['Name'].value
+        name = string.capwords(slots['Name'].value)
         dynamo_helper.update_name_from_users(user_id, name)
         speech_text = "Okay, I will call you " + name + " from now on"
         card_text = speech_text

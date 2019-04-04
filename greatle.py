@@ -292,6 +292,17 @@ class SuicidePreventionIntentHandler(AbstractRequestHandler):
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text, False)
 
 
+class ThankYouIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return is_intent_name("ThankYouIntent")(handler_input)
+
+    def handle(self, handler_input):
+        thanks = ["You're welcome!", "No problem amigo!", "Aww shucks, you are making me blush.", "No, thank YOU!"]
+        speech_text = thanks[random.randint(0, len(thanks) - 1)]
+        card_text = speech_text
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, False)
+
+
 class CancelOrStopIntentHandler(AbstractRequestHandler):
     """Single handler for Cancel and Stop Intent."""
     def can_handle(self, handler_input):

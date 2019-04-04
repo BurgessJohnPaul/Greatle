@@ -2,12 +2,12 @@ from ask_sdk_model.ui import SimpleCard
 import dynamo_helper
 
 
-def build_response(handler_input, card_title, speech_text, end_session):
+def build_response(handler_input, card_title, card_text, speech_text, end_session=False):
     if handler_input.attributes_manager.session_attributes["drunk_mode_state"] is "True":
         speech_text = '<prosody rate="x-slow"><emphasis level="strong">' + speech_text + '</emphasis></prosody>'
 
     handler_input.response_builder.speak(speech_text).set_card(
-        SimpleCard(card_title, speech_text)).set_should_end_session(
+        SimpleCard(card_title, card_text)).set_should_end_session(
         end_session)
 
     return handler_input.response_builder.response

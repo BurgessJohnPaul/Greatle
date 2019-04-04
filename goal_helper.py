@@ -8,6 +8,7 @@ import similarity_helper
 DATE_FORMAT = "%Y-%m-%d"
 NO_DATE = "NO_DATE"
 congrats = ["Congrats!", "Great work!", "Keep on rockin' it!", "Go Bucks!", "Keep it up!"]
+remember = ["Sure, I'll remember that!", "You got it boss!", "I won't forget that!", "I like that goal!", "You know I got that data stored safely!", "JUST DO IT!"]
 
 
 def create_goal_helper(user_id, slots):
@@ -20,7 +21,7 @@ def create_goal_helper(user_id, slots):
         if goal is None and goal_phrase is None:
             speech_text = "I don't understand your goal. Could you rephrase it?"
         else:
-            speech_text = "Sure I'll remember that!"
+            speech_text = remember[random.randint(0, len(remember) - 1)]
 
             if goal is None:
                 goal_value = goal_phrase

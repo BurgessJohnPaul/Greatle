@@ -3,7 +3,7 @@ import dynamo_helper
 
 
 def build_response(handler_input, card_title, card_text, speech_text, end_session=False):
-    if handler_input.attributes_manager.session_attributes["drunk_mode_state"] == "True":
+    if handler_input.attributes_manager.session_attributes["drunk_mode_state"]:
         speech_text = '<prosody rate="x-slow"><emphasis level="strong">' + speech_text + '</emphasis></prosody>'
 
     handler_input.response_builder.speak(speech_text).set_card(
@@ -14,8 +14,8 @@ def build_response(handler_input, card_title, card_text, speech_text, end_sessio
 
 
 def set_drunk_mode(user_id, handler_input, state):
-    dynamo_helper.set_col_val(user_id, "drunk_mode_state", str(state))
-    handler_input.attributes_manager.session_attributes["drunk_mode_state"] = str(state)
+    dynamo_helper.set_col_val(user_id, "drunk_mode_state", state)
+    handler_input.attributes_manager.session_attributes["drunk_mode_state"] = state
 
 
 def get_drunk_mode_state(user_id):

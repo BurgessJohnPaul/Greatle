@@ -54,7 +54,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
             else:
                 speech_text = "Hello, welcome back! How may I assist you?"
         else:
-            speech_text = "Hello, welcome to Greatle. I am here to give you encouragement, advice, and help set and maintain goals. How may I assist you?"
+            speech_text = "Hello, welcome to Greatle. I am here to give you encouragement, advice, and help set and maintain goals. You can say 'Help' to learn more."
             dynamo_helper.put_item_to_users(user_id)
         card_text = speech_text
 
@@ -221,7 +221,7 @@ class HelpIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         speech_text = "I can give you life advice. You can ask me for advice by saying something like 'I want advice" \
                       " about love'. I can also help you manage your goals. Say 'goal help' to learn more. If you want"\
-                      " to learn about my other features, like drunk mode, say 'other help'."
+                      " to learn about my other features say 'other help'."
         card_text = speech_text
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text, False)
 
@@ -251,7 +251,7 @@ class OtherHelpIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speech_text = "You can say 'turn on drunk mode' to make me talk differently. If you want me to remember your name say something like call me Steven"
+        speech_text = "If you want me to remember your name say something like call me Steven. Also, you can say 'turn on drunk mode' to enable drunk mode."
         card_text = speech_text
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text, False)
 

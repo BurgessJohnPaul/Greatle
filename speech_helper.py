@@ -23,5 +23,7 @@ def get_drunk_mode_state(user_id):
     if 'Item' in response and 'drunk_mode_state' in response['Item']:
         print("Drunk Mode State: " + response['Item']['drunk_mode_state'])
         print("Drunk Mode State Type: ", type(response['Item']['drunk_mode_state']))
+        print("Drunk Mode is True: ", response['Item']['drunk_mode_state'] is "True")
         return response['Item']['drunk_mode_state'] is "True"
-    return False
+    else:
+        return False

@@ -236,7 +236,7 @@ class GoalHelpIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         speech_text = "I can help you keep track of your goals. You can add a new goal by saying something like 'I " \
                       "want to meet Hillary Clinton'. Then, if you achieve this, you can say 'I have" \
-                      " completed my goal of meeting Hillary Clinton'. If you give up on your goal, you can can say, " \
+                      " completed my goal of meeting Hillary Clinton'. If you give up on your goal, you can say, " \
                       "'Delete my goal to meet Hillary Clinton'. You can ask me about your goals by saying 'List" \
                       " my goals' or 'List my completed goals.'"
         card_text = speech_text

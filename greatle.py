@@ -54,7 +54,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
             else:
                 speech_text = "Hello, welcome back! How may I assist you?"
         else:
-            speech_text = "Hello, welcome to Greatle. I am here to give you encouragement, advice, and help set and maintain goals. You can say 'Help' to learn more."
+            speech_text = "Hello, welcome to Henry by Greatle. I am here to give you encouragement, advice, and help set and maintain goals. You can say 'Help' to learn more."
             dynamo_helper.put_item_to_users(user_id)
         card_text = speech_text
 

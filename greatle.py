@@ -439,6 +439,7 @@ sb.add_request_handler(SuicidePreventionIntentHandler())
 sb.add_request_handler(GoalHelpIntentHandler())
 sb.add_request_handler(OtherHelpIntentHandler())
 
+sb.add_request_handler(ThankYouIntentHandler())
 sb.add_request_handler(YesIntentHandler())
 sb.add_request_handler(NoIntentHandler())
 sb.add_request_handler(HelpIntentHandler())

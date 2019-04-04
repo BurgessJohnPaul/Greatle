@@ -21,9 +21,6 @@ def set_drunk_mode(user_id, handler_input, state):
 def get_drunk_mode_state(user_id):
     response = dynamo_helper.get_item_from_users(user_id)
     if 'Item' in response and 'drunk_mode_state' in response['Item']:
-        print("Drunk Mode State: " + response['Item']['drunk_mode_state'])
-        print("Drunk Mode State Type: ", type(response['Item']['drunk_mode_state']))
-        print("Drunk Mode is True: ", response['Item']['drunk_mode_state'] == "True")
         return response['Item']['drunk_mode_state'] == "True"
     else:
         return False

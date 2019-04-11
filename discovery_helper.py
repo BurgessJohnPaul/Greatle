@@ -40,8 +40,7 @@ def query(keywords):
     process = Process(target=query_2, args=[conn2, keywords])
     process.start()
     discovery = getDiscovery()
-    query = discovery.query(ENVIRONMENT, COLLECTION, natural_language_query=keywords, passages=True,
-                            passages_fields='Quote')
+    query = discovery.query(ENVIRONMENT, COLLECTION, natural_language_query=keywords, return_fields=['Quote', 'Author'])
 
     if query.get_result()['matching_results'] == 0:
         result = conn1.recv()
@@ -57,9 +56,9 @@ def query(keywords):
     print('query id:', queryId)
 
     result = None
-    for result in random.sample(query.get_result()['passages'], min(10, query.get_result()['matching_results'])):
-        print(result['passage_text'])
-        docId = result['document_id']
+    for result in random.sample(query.get_result()['results'], min(10, query.get_result()['matching_results'])):
+        print(result['Quote'])
+        docId = result['id']
 
         examples = discovery.list_training_examples(ENVIRONMENT, COLLECTION, queryId)
 
@@ -74,13 +73,7 @@ def query(keywords):
             break
 
     process.join()
-    if result is None:
-        return None
-    else:
-        docQuery = discovery.query(environment_id=ENVIRONMENT, collection_id=COLLECTION,
-                                   query='id::[' + result['document_id'] + ']')
-        author = docQuery.get_result()['results'][0]['Author']
-        return result['passage_text'], result['document_id'], queryId, author
+    return None if result is None else(result['Quote'], result['id'], queryId, result['Author'])
 
 
 def query_2(conn, keywords):

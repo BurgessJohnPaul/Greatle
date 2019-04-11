@@ -74,7 +74,13 @@ def query(keywords):
             break
 
     process.join()
-    return None if result is None else (result['passage_text'], result['document_id'], queryId)
+    if result is None:
+        return None
+    else:
+        docQuery = discovery.query(environment_id=ENVIRONMENT, collection_id=COLLECTION,
+                                   query='id::[' + result['document_id'] + ']')
+        author = docQuery.get_result()['results'][0]['Author']
+        return result['passage_text'], result['document_id'], queryId, author
 
 
 def query_2(conn, keywords):

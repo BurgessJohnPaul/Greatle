@@ -31,6 +31,7 @@ GOAL_TO_DELETE_SESSION_ATTRIBUTE = "goal_to_delete"
 LAST_QUERY_SESSION_ATTRIBUTE = "last_query"
 LAST_QUERY_ID_SESSION_ATTRIBUTE = "last_query_id"
 LAST_DOCUMENT_ID_SESSION_ATTRIBUTE = "last_document_id"
+LAST_AUTHOR_SESSION_ATTRIBUTE = 'last_author'
 card_title = 'Henry by Greatle'
 
 
@@ -98,16 +99,19 @@ class AdviceIntentHandler(AbstractRequestHandler):
             passage = queryResults[0]
             docId = queryResults[1]
             queryId = queryResults[2]
+            author = queryResults[3]
 
-            speech_text = passage + "<break time='2s'/> Was that helpful?"
+            speech_text = passage + "<break time='1s'/> Was that helpful?"
             card_text = passage + "\nWas that helpful?"
             handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = queryId
             print('session attributes:', handler_input.attributes_manager.session_attributes)
             handler_input.attributes_manager.session_attributes[LAST_DOCUMENT_ID_SESSION_ATTRIBUTE] = docId
+            handler_input.attributes_manager.session_attributes[LAST_AUTHOR_SESSION_ATTRIBUTE] = author
             print('session attributes:', handler_input.attributes_manager.session_attributes)
         elif queryResults is not None and isinstance(queryResults, str):
             speech_text = queryResults
             card_text = speech_text
+            handler_input.attributes_manager.session_attributes[LAST_AUTHOR_SESSION_ATTRIBUTE] = None
         else:
             speech_text = 'I was unable to find anything on that subject.'
             card_text = speech_text
@@ -255,7 +259,6 @@ class OtherHelpIntentHandler(AbstractRequestHandler):
         card_text = speech_text
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text, False)
 
-
 class TurnOnDrunkModeHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         return is_intent_name("TurnOnDrunkModeIntent")(handler_input)
@@ -331,6 +334,23 @@ class CancelOrStopIntentHandler(AbstractRequestHandler):
         card_text = speech_text
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text, True)
 
+class LastAuthorIntentHandler(AbstractRequestHandler):
+    """Handler for Help Intent."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("LastAuthorIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        if handler_input.request_envelope.session.attributes is not None and \
+                handler_input.request_envelope.session.attributes.get(LAST_AUTHOR_SESSION_ATTRIBUTE) is not None:
+            speech_text = "The author of the last quote was "\
+                          + handler_input.attributes_manager.session_attributes[LAST_AUTHOR_SESSION_ATTRIBUTE]
+        else:
+            speech_text = "There are no recent quotes or the author is unavailable."
+        card_text = speech_text
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, False)
 
 class YesIntentHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):

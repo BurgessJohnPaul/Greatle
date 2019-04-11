@@ -467,6 +467,7 @@ sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(FallbackIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
 sb.add_request_handler(UpdateNameIntentHandler())
+sb.add_request_handler(LastAuthorIntentHandler())
 
 sb.add_exception_handler(CatchAllExceptionHandler())
 

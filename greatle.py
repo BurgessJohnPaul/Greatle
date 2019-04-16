@@ -5,6 +5,7 @@
 import logging
 import boto3
 import dynamo_helper
+import journal_helper
 import goal_helper
 import discovery_helper
 import speech_helper
@@ -215,6 +216,23 @@ class ListCompletedGoalIntentHandler(AbstractRequestHandler):
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text, False)
 
 
+class JournalIntentHandler(AbstractRequestHandler):
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("JournalIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+
+        user_id = handler_input.request_envelope.session.user.user_id[18:]
+        slots = handler_input.request_envelope.request.intent.slots
+
+        speech_text = journal_helper.create_journal_helper(user_id, slots)
+        card_text = speech_text
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, False)
+
+
 class HelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
     def can_handle(self, handler_input):
@@ -258,6 +276,7 @@ class OtherHelpIntentHandler(AbstractRequestHandler):
         speech_text = "If you want me to remember your name say something like call me Steven. Also, you can say 'turn on drunk mode' to enable drunk mode."
         card_text = speech_text
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text, False)
+
 
 class TurnOnDrunkModeHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
@@ -451,6 +470,8 @@ sb.add_request_handler(RetrieveGoalIntentHandler())
 sb.add_request_handler(ListGoalIntentHandler())
 sb.add_request_handler(DeleteGoalIntentHandler())
 sb.add_request_handler(ListCompletedGoalIntentHandler())
+
+sb.add_request_handler(JournalIntentHandler())
 
 sb.add_request_handler(TurnOnDrunkModeHandler())
 sb.add_request_handler(TurnOffDrunkModeHandler())

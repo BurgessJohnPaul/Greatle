@@ -124,3 +124,19 @@ def create_goal(user_id, goal_desc, created_on, complete_by):
 
     set_col_val(user_id, 'goal_list', goals)
 
+
+def create_journal_entry(user_id, journal_entry):
+    response = get_row(user_id)
+
+    if "journal_entry_list" not in response["Item"]:
+        response['Item']['journal_entry_list'] = []
+
+    journal_entries = response['Item']['journal_entry_list']
+
+    new_entry = {}
+    new_entry["text"] = journal_entry
+
+    journal_entries.append(new_entry)
+
+    set_col_val(user_id, 'journal_entry_list', journal_entries)
+

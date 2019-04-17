@@ -52,7 +52,7 @@ def sentiment_with_threshold(text):
                 return HAPPY
             else:
                 return SLIGHTLY_HAPPY
-        if tone[0] == SAD_TONE or ANGER_TONE:
+        if tone[0] == SAD_TONE or tone[0] == ANGER_TONE:
             if tone[1] > .8:
                 return SAD
             else:

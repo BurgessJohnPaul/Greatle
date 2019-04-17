@@ -9,6 +9,7 @@ import journal_helper
 import goal_helper
 import discovery_helper
 import speech_helper
+import sentiment_helper
 import random
 import json
 import string
@@ -273,18 +274,31 @@ class GetSentimentIntentHandler(AbstractRequestHandler):
         completed_goal_list = dynamo_helper.list_goals_with_status(user_id, "COMPLETED")
         journal_entries = journal_helper.get_all_entries(user_id)
 
-        speech_text = ""
+        all_text = ""
 
         for goal in goal_list:
-            speech_text = speech_text + goal + " "
+            all_text = all_text + goal + " "
         for goal in completed_goal_list:
-            speech_text = speech_text + goal + " "
+            all_text = all_text + goal + " "
         for journal_entry in journal_entries:
-            speech_text = speech_text + journal_entry["text"] + " "
+            all_text = all_text + journal_entry["text"] + " "
 
-        if speech_text == "":
-            speech_text = "You don't have any journal entries or goals. Add some so we know more about you. "
+        if all_text == "":
+            speech_text = "You don't have any journal entries or goals. Add some so we know more about you."
+        else:
+            user_sentiment = sentiment_helper.sentiment_with_threshold(all_text)
 
+            if user_sentiment == "HAPPY":
+                speech_text = "You've been very happy. Keep it up! You're a positive force in the universe!"
+            elif user_sentiment == "SLIGHTLY_HAPPY":
+                speech_text = "You've been slightly happy. That's pretty good."
+            elif user_sentiment == "NEUTRAL":
+                speech_text = "You've been feeling neutral. Try "
+            elif user_sentiment == "SLIGHTLY_SAD":
+                speech_text = "It seems like you've been a little under the weather. That's okay. Tomorrow's a new day."
+            elif user_sentiment == "SAD":
+                speech_text = "It seems like you have not been feeling good. That's okay. Everybody feels sad" \
+                              "sometimes."
         card_text = speech_text
         clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)

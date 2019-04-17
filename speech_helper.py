@@ -1,5 +1,6 @@
 from ask_sdk_model import ui
-from ask_sdk_model.interfaces.display import RenderTemplateDirective, BodyTemplate2, BackButtonBehavior, ImageInstance, Image
+from ask_sdk_model.interfaces.display import RenderTemplateDirective, BodyTemplate7, BackButtonBehavior, ImageInstance, \
+    Image, ImageSize
 from ask_sdk_model.ui import SimpleCard, StandardCard
 import dynamo_helper
 
@@ -10,12 +11,11 @@ def build_response(handler_input, card_title, card_text, speech_text, card_image
 
     if card_image_url and supports_display(handler_input):
         card = StandardCard(card_title, card_text, ui.Image(card_image_url, card_image_url))
-        img = Image('Meme', [ImageInstance(url=card_image_url)])
+        img = Image('Meme', [ImageInstance(url=card_image_url, size=ImageSize.X_SMALL)])
         directive = RenderTemplateDirective(
-                    BodyTemplate2(
+                    BodyTemplate7(
                         back_button=BackButtonBehavior.HIDDEN,
-                        image=img, title=card_title,
-                        text_content=card_text))
+                        image=img, title=card_title))
         handler_input.response_builder.speak(speech_text).set_card(card).add_directive(directive).set_should_end_session(end_session)
     else:
         card = SimpleCard(card_title, card_text)

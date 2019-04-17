@@ -39,3 +39,13 @@ def get_random_journal_entry_helper(user_id):
 
     return speech_text
 
+
+def get_all_entries(user_id):
+    journal_list = dynamo_helper.get_journal(user_id)
+
+    if len(journal_list) == 0:
+        return ""
+    else:
+        return str(journal_list)
+
+

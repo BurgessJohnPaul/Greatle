@@ -252,11 +252,31 @@ class GetJournalIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
 
         user_id = handler_input.request_envelope.session.user.user_id[18:]
-        slots = handler_input.request_envelope.request.intent.slots
 
         speech_text = journal_helper.get_random_journal_entry_helper(user_id)
         card_text = speech_text
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text, False)
+
+
+class GetSentimentIntentHandler(AbstractRequestHandler):
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("GetSentimentIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+
+        user_id = handler_input.request_envelope.session.user.user_id[18:]
+
+        goal_text = goal_helper.list_goal_helper(user_id)
+        completed_goal_text = goal_helper.list_completed_goal_helper(user_id)
+        journal_text = journal_helper.get_all_entries(user_id)
+
+        speech_text = goal_text + " " + completed_goal_text + " " + journal_text
+        card_text = speech_text
+        clearSessionAttributes(handler_input)
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
 class HelpIntentHandler(AbstractRequestHandler):
@@ -528,6 +548,8 @@ sb.add_request_handler(ListCompletedGoalIntentHandler())
 
 sb.add_request_handler(JournalIntentHandler())
 sb.add_request_handler(GetJournalIntentHandler())
+
+sb.add_request_handler(GetSentimentIntentHandler())
 
 sb.add_request_handler(TurnOnDrunkModeHandler())
 sb.add_request_handler(TurnOffDrunkModeHandler())

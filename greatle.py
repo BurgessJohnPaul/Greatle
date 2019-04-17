@@ -390,8 +390,9 @@ class LastAuthorIntentHandler(AbstractRequestHandler):
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 def clearSessionAttributes(handler_input, deleteGoalToDelete=True, deleteQueryID=True):
-    if deleteGoalToDelete: handler_input.attributes_manager.session_attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE] = None
-    if deleteQueryID: handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = None
+    if handler_input.request_envelope.session.attributes is not None:
+        if deleteGoalToDelete: handler_input.attributes_manager.session_attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE] = None
+        if deleteQueryID: handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = None
 
 
 class YesIntentHandler(AbstractRequestHandler):
@@ -406,8 +407,6 @@ class YesIntentHandler(AbstractRequestHandler):
                 GOAL_TO_DELETE_SESSION_ATTRIBUTE])
             speech_text = "Okay, I deleted that goal"
         elif handler_input.request_envelope.session.attributes is not None and handler_input.request_envelope.session.attributes.get(LAST_QUERY_ID_SESSION_ATTRIBUTE) is not None:
-            #speech_text = "The last query was " + handler_input.request_envelope.session.attributes[
-            #    LAST_QUERY_SESSION_ATTRIBUTE]
             speech_text = "Good. I'll record that."
             discovery_helper.rateQuery(handler_input.request_envelope.session.attributes[
                 LAST_QUERY_ID_SESSION_ATTRIBUTE], handler_input.request_envelope.session.attributes[

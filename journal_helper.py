@@ -12,3 +12,9 @@ def create_journal_helper(user_id, slots):
         speech_text = "Update this to say something depending on the sentiment of the entry."
 
     return speech_text
+
+
+def get_random_journal_entry_helper(user_id):
+
+    journal = dynamo_helper.get_journal(user_id)
+

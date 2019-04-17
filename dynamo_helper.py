@@ -140,3 +140,16 @@ def create_journal_entry(user_id, journal_entry):
 
     set_col_val(user_id, 'journal_entry_list', journal_entries)
 
+
+def get_journal(user_id):
+    response = get_row(user_id)
+
+    entry_list = []
+
+    #Return empty list if no 'journal_entry_list'
+    if 'journal_entry_list' in response['Item']:
+        journal_entries = response['Item']['journal_entry_list']
+        for entry in journal_entries:
+            entry_list.append(entry)
+    return entry_list
+

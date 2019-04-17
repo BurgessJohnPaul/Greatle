@@ -1,4 +1,4 @@
-from ask_sdk_model.ui import SimpleCard, StandardCard
+from ask_sdk_model.ui import SimpleCard, StandardCard, Image
 import dynamo_helper
 
 
@@ -7,7 +7,7 @@ def build_response(handler_input, card_title, card_text, speech_text, card_image
         speech_text = '<prosody rate="x-slow"><emphasis level="strong">' + speech_text + '</emphasis></prosody>'
 
     if card_image_url:
-        card = StandardCard(card_title, card_text, card_image_url)
+        card = StandardCard(card_title, card_text, Image(card_image_url, card_image_url))
     else:
         card = SimpleCard(card_title, card_text)
 

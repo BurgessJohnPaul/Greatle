@@ -269,11 +269,22 @@ class GetSentimentIntentHandler(AbstractRequestHandler):
 
         user_id = handler_input.request_envelope.session.user.user_id[18:]
 
-        goal_text = goal_helper.list_goal_helper(user_id)
-        completed_goal_text = goal_helper.list_completed_goal_helper(user_id)
-        journal_text = journal_helper.get_all_entries(user_id)
+        goal_list = dynamo_helper.list_goals(user_id)
+        completed_goal_list = dynamo_helper.list_goals_with_status(user_id, "COMPLETED")
+        journal_entries = journal_helper.get_all_entries(user_id)
 
-        speech_text = goal_text + " " + completed_goal_text + " " + journal_text
+        speech_text = ""
+
+        for goal in goal_list:
+            speech_text = speech_text + goal + " "
+        for goal in completed_goal_list:
+            speech_text = speech_text + goal + " "
+        for journal_entry in journal_entries:
+            speech_text = speech_text + journal_entry["text"] + " "
+
+        if speech_text == "":
+            speech_text = "You don't have any journal entries or goals. Add some so we know more about you."
+
         card_text = speech_text
         clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)

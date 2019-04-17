@@ -2,7 +2,7 @@ import random
 import dynamo_helper
 import sentiment_helper
 
-joy_responses = ["That's great!.", "It sounds like you had a good day.", "Wow that's awesome.", "I am happy for you."]
+joy_responses = ["That's great!", "It sounds like you had a good day.", "Wow that's awesome.", "I am happy for you."]
 sadness_responses = ["That's too bad.", "Tomorrow's another day.", "I'm sorry you don't feel great",
                      "It's okay to feel sad sometimes"]
 default_responses = ["Okay, I've recorded this in your journal"]

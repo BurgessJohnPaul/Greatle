@@ -9,18 +9,19 @@ def build_response(handler_input, card_title, card_text, speech_text, card_image
     if handler_input.attributes_manager.session_attributes["drunk_mode_state"]:
         speech_text = '<prosody rate="slow"><emphasis level="strong">' + speech_text + '</emphasis></prosody>'
 
+    print(card_image_url and supports_display(handler_input))
     if card_image_url and supports_display(handler_input):
         card = StandardCard(card_title, card_text, ui.Image(card_image_url, card_image_url))
-        img = Image('Meme', [ImageInstance(url=card_image_url, size=ImageSize.X_SMALL)])
-        directive = RenderTemplateDirective(
-                    BodyTemplate7(
-                        back_button=BackButtonBehavior.HIDDEN,
-                        image=img, title=card_title))
-        handler_input.response_builder.speak(speech_text).set_card(card).add_directive(directive).set_should_end_session(end_session)
+        # img = Image('Meme', [ImageInstance(url=card_image_url, size=ImageSize.X_SMALL)])
+        # directive = RenderTemplateDirective(
+        #             BodyTemplate7(
+        #                 back_button=BackButtonBehavior.HIDDEN,
+        #                 image=img, title=card_title))
+        # handler_input.response_builder.speak(speech_text).set_card(card).add_directive(directive).set_should_end_session(end_session)
     else:
         card = SimpleCard(card_title, card_text)
-        handler_input.response_builder.speak(speech_text).set_card(card).set_should_end_session(end_session)
 
+    handler_input.response_builder.speak(speech_text).set_card(card).set_should_end_session(end_session)
     return handler_input.response_builder.response
 
 

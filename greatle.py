@@ -77,6 +77,7 @@ class UpdateNameIntentHandler(AbstractRequestHandler):
         dynamo_helper.update_name_from_users(user_id, name)
         speech_text = "Okay, I will call you " + name + " from now on"
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -118,6 +119,7 @@ class AdviceIntentHandler(AbstractRequestHandler):
             speech_text = 'I was unable to find anything on that subject.'
             card_text = speech_text
 
+        clearSessionAttributes(handler_input, deleteQueryID=False)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -135,7 +137,7 @@ class CreateGoalIntentHandler(AbstractRequestHandler):
 
         speech_text = goal_helper.create_goal_helper(user_id, slots)
         card_text = speech_text
-
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -197,6 +199,7 @@ class ListGoalIntentHandler(AbstractRequestHandler):
 
         speech_text = goal_helper.list_goal_helper(user_id)
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -371,6 +374,12 @@ class LastAuthorIntentHandler(AbstractRequestHandler):
             speech_text = "There are no recent quotes or the author is unavailable."
         card_text = speech_text
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
+
+def clearSessionAttributes(handler_input, deleteQueryID=True):
+    handler_input.attributes_manager.session_attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE] = None
+    if deleteQueryID:
+        handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = None
+
 
 class YesIntentHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):

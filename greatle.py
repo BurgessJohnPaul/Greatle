@@ -297,7 +297,7 @@ class GetSentimentIntentHandler(AbstractRequestHandler):
             elif user_sentiment == "SLIGHTLY_SAD":
                 speech_text = "It seems like you've been a little under the weather. That's okay. Tomorrow's a new day."
             elif user_sentiment == "SAD":
-                speech_text = "It seems like you have not been feeling good. That's okay. Everybody feels sad" \
+                speech_text = "It seems like you have not been feeling good. That's okay. Everybody feels sad " \
                               "sometimes."
         card_text = speech_text
         clearSessionAttributes(handler_input)
@@ -373,7 +373,8 @@ class HelpIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         speech_text = "I can give you life advice. You can ask me for advice by saying something like 'I want advice" \
-                      " about love'. I can also help you manage your goals. Say 'goal help' to learn more. I can keep " \
+                      " about love'. Once I learn more about you, I can give you personal advice, just say give me personal advice" \
+                      " I can also help you manage your goals. Say 'goal help' to learn more. I can keep " \
                       "a journal for you. Say 'journal help' to learn about this feature.  To learn about my other " \
                       "features, say 'more help'."
         card_text = speech_text
@@ -422,7 +423,9 @@ class OtherHelpIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speech_text = "If you want me to remember your name say something like call me Steven. Also, you can say 'turn on drunk mode' to enable drunk mode."
+        speech_text = "If you want me to remember your name say something like call me Steven. If you liked a quote and" \
+                      " want to know the author, just say who was the author. I can keep track of your mood, just ask " \
+                      "how have I been. Also, you can say 'turn on drunk mode' to enable drunk mode."
         card_text = speech_text
         clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)

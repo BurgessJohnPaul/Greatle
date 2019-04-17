@@ -44,8 +44,8 @@ def get_all_entries(user_id):
     journal_list = dynamo_helper.get_journal(user_id)
 
     if len(journal_list) == 0:
-        return ""
+        return []
     else:
-        return str(journal_list)
+        return journal_list
 
 

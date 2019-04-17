@@ -283,7 +283,7 @@ class GetSentimentIntentHandler(AbstractRequestHandler):
             speech_text = speech_text + journal_entry["text"] + " "
 
         if speech_text == "":
-            speech_text = "You don't have any journal entries or goals. Add some so we know more about you."
+            speech_text = "You don't have any journal entries or goals. Add some so we know more about you. "
 
         card_text = speech_text
         clearSessionAttributes(handler_input)

@@ -1,4 +1,5 @@
 from watson_developer_cloud import ToneAnalyzerV3
+import random
 
 tone_analyzer = ToneAnalyzerV3(
     version='2017-09-21',
@@ -15,6 +16,24 @@ JOY_TONE = 'Joy'
 ANGER_TONE = 'Anger'
 SAD_TONE = 'Sad'
 
+HAPPY_TIER_WORDS = ['happy', 'content', 'delighted', 'joy', 'thrilled', 'humility']
+NEUTRAL_AND_SLIGHTLY_SAD_TIER_WORDS = ['encouragement', 'support', 'enrich', 'hopeful']
+SAD_TIER_WORDS = ['melancholy', 'inspiration', 'spark']
+
+
+def get_query_word_from_sentiment(sentiment):
+    word = ""
+    if sentiment == "HAPPY":
+        word = random.choice(HAPPY_TIER_WORDS)
+    elif sentiment == "SLIGHTLY_HAPPY":
+        word = random.choice(HAPPY_TIER_WORDS)
+    elif sentiment == "NEUTRAL":
+        word = random.choice(NEUTRAL_AND_SLIGHTLY_SAD_TIER_WORDS)
+    elif sentiment == "SLIGHTLY_SAD":
+        word = random.choice(NEUTRAL_AND_SLIGHTLY_SAD_TIER_WORDS)
+    elif sentiment == "SAD":
+        word = random.choice(SAD_TIER_WORDS)
+    return word
 
 
 def get_sentiment_and_degree(text):

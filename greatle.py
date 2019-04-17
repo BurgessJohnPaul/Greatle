@@ -304,6 +304,66 @@ class GetSentimentIntentHandler(AbstractRequestHandler):
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
+class GetPersonalAdviceHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return is_intent_name("GetPersonalAdvice")(handler_input)
+
+    def handle(self, handler_input):
+        user_id = handler_input.request_envelope.session.user.user_id[18:]
+
+        goal_list = dynamo_helper.list_goals(user_id)
+        completed_goal_list = dynamo_helper.list_goals_with_status(user_id, "COMPLETED")
+        journal_entries = journal_helper.get_all_entries(user_id)
+
+        all_text = ""
+        user_sentiment = ""
+
+        for goal in goal_list:
+            all_text = all_text + goal + " "
+        for goal in completed_goal_list:
+            all_text = all_text + goal + " "
+        for journal_entry in journal_entries:
+            all_text = all_text + journal_entry["text"] + " "
+
+        if all_text == "":
+            speech_text = "You don't have any journal entries or goals. Tell me more about yourself so I can give you relevant advice"
+        else:
+            user_sentiment = sentiment_helper.sentiment_with_threshold(all_text)
+
+        if user_sentiment != "":
+            query_word = sentiment_helper.get_query_word_from_sentiment(user_sentiment)
+            handler_input.attributes_manager.session_attributes[LAST_QUERY_SESSION_ATTRIBUTE] = query_word
+            queryResults = discovery_helper.query(query_word)
+            print('query results:', queryResults)
+            if queryResults is not None and isinstance(queryResults, (tuple, list)):
+                passage = queryResults[0]
+                docId = queryResults[1]
+                queryId = queryResults[2]
+                author = queryResults[3]
+
+                speech_text = passage + "<break time='1s'/> Was that helpful?"
+                card_text = passage + "\nWas that helpful?"
+                handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = queryId
+                print('session attributes:', handler_input.attributes_manager.session_attributes)
+                handler_input.attributes_manager.session_attributes[LAST_DOCUMENT_ID_SESSION_ATTRIBUTE] = docId
+                handler_input.attributes_manager.session_attributes[LAST_AUTHOR_SESSION_ATTRIBUTE] = author
+                print('session attributes:', handler_input.attributes_manager.session_attributes)
+            elif queryResults is not None and isinstance(queryResults, str):
+                speech_text = queryResults
+                card_text = speech_text
+                handler_input.attributes_manager.session_attributes[LAST_AUTHOR_SESSION_ATTRIBUTE] = None
+            else:
+                speech_text = 'Ask me later when you have used the skill more'
+                card_text = speech_text
+
+            clearSessionAttributes(handler_input, deleteQueryID=False)
+        else:
+            card_text = speech_text
+
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
+
+
+
 class HelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
     def can_handle(self, handler_input):
@@ -593,6 +653,7 @@ sb.add_request_handler(FallbackIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
 sb.add_request_handler(UpdateNameIntentHandler())
 sb.add_request_handler(LastAuthorIntentHandler())
+sb.add_request_handler(GetPersonalAdviceHandler())
 
 sb.add_exception_handler(CatchAllExceptionHandler())
 

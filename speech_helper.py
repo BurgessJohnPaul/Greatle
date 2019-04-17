@@ -7,7 +7,7 @@ import dynamo_helper
 
 def build_response(handler_input, card_title, card_text, speech_text, card_image_url=None, end_session=False):
     if handler_input.attributes_manager.session_attributes["drunk_mode_state"]:
-        speech_text = '<prosody rate="x-slow"><emphasis level="strong">' + speech_text + '</emphasis></prosody>'
+        speech_text = '<prosody rate="slow"><emphasis level="strong">' + speech_text + '</emphasis></prosody>'
 
     if card_image_url and supports_display(handler_input):
         card = StandardCard(card_title, card_text, ui.Image(card_image_url, card_image_url))

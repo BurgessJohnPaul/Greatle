@@ -1,5 +1,5 @@
-from ask_sdk_model.interfaces.display import RenderTemplateDirective, BodyTemplate2, BackButtonBehavior, ImageInstance
-from ask_sdk_model.ui import SimpleCard, StandardCard, Image
+from ask_sdk_model.interfaces.display import RenderTemplateDirective, BodyTemplate2, BackButtonBehavior, ImageInstance, Image
+from ask_sdk_model.ui import SimpleCard, StandardCard
 import dynamo_helper
 
 
@@ -8,7 +8,7 @@ def build_response(handler_input, card_title, card_text, speech_text, card_image
         speech_text = '<prosody rate="x-slow"><emphasis level="strong">' + speech_text + '</emphasis></prosody>'
 
     if card_image_url:
-        # card = StandardCard(card_title, card_text, Image(card_image_url, card_image_url))
+        # card = StandardCard(card_title, card_text, ui.Image(card_image_url, card_image_url))
         img = Image(sources=[ImageInstance(url=card_image_url)])
         directive = RenderTemplateDirective(
                     BodyTemplate2(

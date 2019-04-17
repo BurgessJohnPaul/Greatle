@@ -14,7 +14,7 @@ SLIGHTLY_SAD = "SLIGHTLY_SAD"
 SAD = "SAD"
 JOY_TONE = 'Joy'
 ANGER_TONE = 'Anger'
-SAD_TONE = 'Sad'
+SAD_TONE = 'Sadness'
 
 HAPPY_TIER_WORDS = ['happy', 'content', 'delighted', 'joy', 'thrilled', 'humility']
 NEUTRAL_AND_SLIGHTLY_SAD_TIER_WORDS = ['encouragement', 'support', 'enrich', 'hopeful']

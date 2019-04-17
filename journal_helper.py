@@ -1,6 +1,11 @@
 import random
 import dynamo_helper
+import sentiment_helper
 
+joy_responses = ["That's great!.", "It sounds like you had a good day.", "Wow that's awesome.", "I am happy for you."]
+sadness_responses = ["That's too bad.", "Tomorrow's another day.", "I'm sorry you don't feel great",
+                     "It's okay to feel sad sometimes"]
+default_responses = ["Okay, I've recorded this in your journal"]
 
 def create_journal_helper(user_id, slots):
     if slots is None or "JournalEntry" not in slots:
@@ -10,7 +15,14 @@ def create_journal_helper(user_id, slots):
 
         dynamo_helper.create_journal_entry(user_id, journal_entry)
 
-        speech_text = "Update this to say something depending on the sentiment of the entry."
+        sentiments = sentiment_helper.get_sentiment(journal_entry)
+
+        if "Joy" in sentiments:
+            speech_text = random.choice(joy_responses)
+        elif "Anger" in sentiments or "Sadness" in sentiments:
+            speech_text = random.choice(sadness_responses)
+        else:
+            speech_text = random.choice(default_responses)
 
     return speech_text
 

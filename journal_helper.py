@@ -24,6 +24,6 @@ def get_random_journal_entry_helper(user_id):
     else:
         random_entry = random.choice(journal_list)
         speech_text = random_entry["text"]
-        
+
     return speech_text
 

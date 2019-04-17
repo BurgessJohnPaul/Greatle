@@ -242,7 +242,7 @@ class JournalIntentHandler(AbstractRequestHandler):
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
-class JournalIntentHandler(AbstractRequestHandler):
+class GetJournalIntentHandler(AbstractRequestHandler):
 
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
@@ -511,6 +511,7 @@ sb.add_request_handler(DeleteGoalIntentHandler())
 sb.add_request_handler(ListCompletedGoalIntentHandler())
 
 sb.add_request_handler(JournalIntentHandler())
+sb.add_request_handler(GetJournalIntentHandler())
 
 sb.add_request_handler(TurnOnDrunkModeHandler())
 sb.add_request_handler(TurnOffDrunkModeHandler())

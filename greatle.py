@@ -254,7 +254,7 @@ class GetJournalIntentHandler(AbstractRequestHandler):
         user_id = handler_input.request_envelope.session.user.user_id[18:]
         slots = handler_input.request_envelope.request.intent.slots
 
-        speech_text = journal_helper.get_random_journal_entry_helper(user_id, slots)
+        speech_text = journal_helper.get_random_journal_entry_helper(user_id)
         card_text = speech_text
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text, False)
 

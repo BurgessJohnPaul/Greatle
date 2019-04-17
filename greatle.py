@@ -152,6 +152,7 @@ class DeleteGoalIntentHandler(AbstractRequestHandler):
         speech_text, goal_description = goal_helper.retrieve_goal_to_delete_helper(user_id, slots)
         handler_input.attributes_manager.session_attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE] = goal_description
         card_text = speech_text
+        clearSessionAttributes(handler_input, deleteGoalToDelete=False)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -165,6 +166,7 @@ class CompleteGoalIntentHandler(AbstractRequestHandler):
 
         speech_text = goal_helper.complete_goal_helper(user_id, slots)
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -182,6 +184,7 @@ class RetrieveGoalIntentHandler(AbstractRequestHandler):
 
         speech_text = goal_helper.retrieve_goal_helper(user_id)
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -217,6 +220,7 @@ class ListCompletedGoalIntentHandler(AbstractRequestHandler):
 
         speech_text = goal_helper.list_completed_goal_helper(user_id)
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -234,6 +238,7 @@ class JournalIntentHandler(AbstractRequestHandler):
 
         speech_text = journal_helper.create_journal_helper(user_id, slots)
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -249,6 +254,7 @@ class HelpIntentHandler(AbstractRequestHandler):
                       " about love'. I can also help you manage your goals. Say 'goal help' to learn more. If you want"\
                       " to learn about my other features say 'more help'."
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -266,6 +272,7 @@ class GoalHelpIntentHandler(AbstractRequestHandler):
                       "'Delete my goal to meet Hillary Clinton'. You can ask me about your goals by saying 'List" \
                       " my goals' or 'List my completed goals.'"
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -279,6 +286,7 @@ class OtherHelpIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         speech_text = "If you want me to remember your name say something like call me Steven. Also, you can say 'turn on drunk mode' to enable drunk mode."
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -291,6 +299,7 @@ class TurnOnDrunkModeHandler(AbstractRequestHandler):
         speech_text = "Okay"
         card_text = speech_text
         speech_helper.set_drunk_mode(user_id, handler_input, True)
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -303,6 +312,7 @@ class TurnOffDrunkModeHandler(AbstractRequestHandler):
         speech_text = "Fine"
         speech_helper.set_drunk_mode(user_id, handler_input, False)
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -315,6 +325,7 @@ class SuicidePreventionIntentHandler(AbstractRequestHandler):
                       "please call the National Suicide Prevention Lifeline at 1-800-273-8255 (TALK) or go to " \
                       "SpeakingOfSuicide.com/resources for a list of additional resources."
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -326,6 +337,7 @@ class ThankYouIntentHandler(AbstractRequestHandler):
         thanks = ["You're welcome!", "No problem amigo!", "Aww shucks, you are making me blush.", "No, thank YOU!"]
         speech_text = thanks[random.randint(0, len(thanks) - 1)]
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -355,6 +367,7 @@ class CancelOrStopIntentHandler(AbstractRequestHandler):
 
         speech_text = random.choice(response_options)
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text, end_session=True)
 
 class LastAuthorIntentHandler(AbstractRequestHandler):
@@ -373,12 +386,13 @@ class LastAuthorIntentHandler(AbstractRequestHandler):
         else:
             speech_text = "There are no recent quotes or the author is unavailable."
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
-def clearSessionAttributes(handler_input, deleteQueryID=True):
-    handler_input.attributes_manager.session_attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE] = None
-    if deleteQueryID:
-        handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = None
+def clearSessionAttributes(handler_input, deleteGoalToDelete=True, deleteQueryID=True):
+    if handler_input.request_envelope.session.attributes is not None:
+        if deleteGoalToDelete: handler_input.attributes_manager.session_attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE] = None
+        if deleteQueryID: handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = None
 
 
 class YesIntentHandler(AbstractRequestHandler):
@@ -391,19 +405,16 @@ class YesIntentHandler(AbstractRequestHandler):
                 handler_input.request_envelope.session.attributes.get(GOAL_TO_DELETE_SESSION_ATTRIBUTE) is not None:
             dynamo_helper.delete_goal(user_id, handler_input.request_envelope.session.attributes[
                 GOAL_TO_DELETE_SESSION_ATTRIBUTE])
-            handler_input.attributes_manager.session_attributes[GOAL_TO_DELETE_SESSION_ATTRIBUTE] = None
             speech_text = "Okay, I deleted that goal"
         elif handler_input.request_envelope.session.attributes is not None and handler_input.request_envelope.session.attributes.get(LAST_QUERY_ID_SESSION_ATTRIBUTE) is not None:
-            #speech_text = "The last query was " + handler_input.request_envelope.session.attributes[
-            #    LAST_QUERY_SESSION_ATTRIBUTE]
             speech_text = "Good. I'll record that."
             discovery_helper.rateQuery(handler_input.request_envelope.session.attributes[
                 LAST_QUERY_ID_SESSION_ATTRIBUTE], handler_input.request_envelope.session.attributes[
                 LAST_DOCUMENT_ID_SESSION_ATTRIBUTE], relevant=True)
-            handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = None
         else:
             speech_text = "Sorry, I am unsure why you said yes. Please start your intent over."
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -420,10 +431,10 @@ class NoIntentHandler(AbstractRequestHandler):
                                            LAST_QUERY_ID_SESSION_ATTRIBUTE],
                                        handler_input.request_envelope.session.attributes[
                                            LAST_DOCUMENT_ID_SESSION_ATTRIBUTE], relevant=False)
-            handler_input.attributes_manager.session_attributes[LAST_QUERY_ID_SESSION_ATTRIBUTE] = None
         else:
             speech_text = "Sorry, I am unsure why you said no. Please start your intent over."
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
@@ -440,6 +451,7 @@ class FallbackIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         speech_text = "I don't understand your command. Say 'help' for a list of commands."
         card_text = speech_text
+        clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 

@@ -1,33 +1,37 @@
 language: python
 python: 3.6
 install:
-  - pip install -r requirements.txt
+- pip install -r requirements.txt
 branches:
   only:
   - master
 before_script:
-  - chmod +x package.sh
+- chmod +x package.sh
 script:
-  - pytest
-  - ./package.sh
+- pytest
+- "./package.sh"
 jobs:
   include:
-    - stage: prod
-      deploy:
-        provider: lambda
-        zip: function.zip
-        function_name: Greatle
-        region: us-east-1
-        role: arn:aws:iam::803197713925:role/DeployLambdaRole
-        runtime: python3.6
-        module_name: greatle
-        handler_name: handler
-        timeout: 15
-        memory_size: 512
-        access_key_id:
-          secure: mdFoiJXrK0kSB4Iq30jAiK9EQo5Zh6VE7SmYAZsZYXrWKTzQvIrTx8piKSuf8S3ob+LPmL9ymDta/3zrA0OJownoNucrcIwh7cGirafVPVR7Mnjbud1uo/X1N2GnZyyn3rz4+Z1enzt5IfHKafZESDmtjQpEVAWLYOPlAiLQl2uOOK2r8SeCMDkUEbnxXM3FKhwBww6QyzXgb/X6A7ZDrPZ6BZuZ76q/fOVx/SR3SsoebwlAqMVHagK61NX9tzwsz304L6jSw5TAc9iNPlKX+/uamraoqlLw+ukNqnFUjML+m1liN8U2esOXaFowNIjEiE+JlB/PFM2Y8OA/lSyy2xkfXode9yO5+DFk/WTXC38Xyea1sizI3kl5u0iHZhfBiolQYzYsElej5kP82hqyxvaDW5Ib5NXLtLDov/jjpUAJRse7geBVJruZS+WaxOoQgAeHYLg1vWgRZAAyUzgWHK61LNlZLux1BAo8neSYheN5Olpg+z+XYOQXGbnoH26tTtInsafKZY7JGVZAPPyBUTJnGgTZiyZIYsP2FH6MqcEsKBuGhocUNlAqRrmbZG5Fkgfh3SQ9pzKnfced6LDTaowsPeo/pal2d4d9zxbMGkC+ZUt3LAOHL7tpgOwtJzOU3DAvezqPtVEqG86n27LFLdS9AUgyXOKJ6ku4RccPHr8=
-        secret_access_key:
-          secure: hv8U7xfnVd5MGEgL320S9whSkYGrOkQtq3TUZRVdqFrIu4F7RC39oi00Aw6nW8B8F/9g8C24vcEz/Q7lU9LLGjeVplMfy5aXmqXDOqvhFyoYF3T7SoW6aYUhhykpL7NjjGp5BsMUv+Kq1ZFR5lOvn5CRalqilXAN2IE2eHHdpfBdjseW/mvYCONZtbfmYxWQcmJugFaPgDqlsmddFxtyqoZnCuOS11/7DuVIRabaspGRmP87UhtkM5bbTDYsgnrQ7en9KNJxef3dg2fXlPg2jpEAC4EMjGxcWmO4FYL+P2yoRHEOfmnuBHX+mq3FdFA5He/EreUdtIHo0IwFLHtXBuxF2MxWChx9VfOmqfHljPod+KittjDLqbDJaGqS/IFA11MqN4XdYF5XuWkiXukDdYCdsKP9qaJfbqUYz70cTZTlKiQvmwzVtu/upAHnlDdkWn5zTiq8HfVTpAVYuFGlyuhlZuxQ5QaQAvZx/o3yloYxIHpxvpgGV8bqe5hOJ1YpNabfLM1rEbVP2IU8PjSFNcg990diMAgmHxKVsV+jQB0msEnhBXeZQ7EC3WWr/Sv4ZCVXc1s5zuk7D8Lsb47pGSWWVs1tldvnmfADztdrjb6UqVM8gmiXOc9aw4ZU1Y61kJssdQOJH3CfnfmIvkjNG7Wy1IOVEG064nC0FZj8pjo=
+  - stage: prod
+    deploy:
+      provider: lambda
+      zip: function.zip
+      function_name: Greatle
+      region: us-east-1
+      role: arn:aws:iam::803197713925:role/DeployLambdaRole
+      runtime: python3.6
+      module_name: greatle
+      handler_name: handler
+      timeout: 15
+      memory_size: 512
+      access_key_id:
+        secure: mdFoiJXrK0kSB4Iq30jAiK9EQo5Zh6VE7SmYAZsZYXrWKTzQvIrTx8piKSuf8S3ob+LPmL9ymDta/3zrA0OJownoNucrcIwh7cGirafVPVR7Mnjbud1uo/X1N2GnZyyn3rz4+Z1enzt5IfHKafZESDmtjQpEVAWLYOPlAiLQl2uOOK2r8SeCMDkUEbnxXM3FKhwBww6QyzXgb/X6A7ZDrPZ6BZuZ76q/fOVx/SR3SsoebwlAqMVHagK61NX9tzwsz304L6jSw5TAc9iNPlKX+/uamraoqlLw+ukNqnFUjML+m1liN8U2esOXaFowNIjEiE+JlB/PFM2Y8OA/lSyy2xkfXode9yO5+DFk/WTXC38Xyea1sizI3kl5u0iHZhfBiolQYzYsElej5kP82hqyxvaDW5Ib5NXLtLDov/jjpUAJRse7geBVJruZS+WaxOoQgAeHYLg1vWgRZAAyUzgWHK61LNlZLux1BAo8neSYheN5Olpg+z+XYOQXGbnoH26tTtInsafKZY7JGVZAPPyBUTJnGgTZiyZIYsP2FH6MqcEsKBuGhocUNlAqRrmbZG5Fkgfh3SQ9pzKnfced6LDTaowsPeo/pal2d4d9zxbMGkC+ZUt3LAOHL7tpgOwtJzOU3DAvezqPtVEqG86n27LFLdS9AUgyXOKJ6ku4RccPHr8=
+      secret_access_key:
+        secure: hv8U7xfnVd5MGEgL320S9whSkYGrOkQtq3TUZRVdqFrIu4F7RC39oi00Aw6nW8B8F/9g8C24vcEz/Q7lU9LLGjeVplMfy5aXmqXDOqvhFyoYF3T7SoW6aYUhhykpL7NjjGp5BsMUv+Kq1ZFR5lOvn5CRalqilXAN2IE2eHHdpfBdjseW/mvYCONZtbfmYxWQcmJugFaPgDqlsmddFxtyqoZnCuOS11/7DuVIRabaspGRmP87UhtkM5bbTDYsgnrQ7en9KNJxef3dg2fXlPg2jpEAC4EMjGxcWmO4FYL+P2yoRHEOfmnuBHX+mq3FdFA5He/EreUdtIHo0IwFLHtXBuxF2MxWChx9VfOmqfHljPod+KittjDLqbDJaGqS/IFA11MqN4XdYF5XuWkiXukDdYCdsKP9qaJfbqUYz70cTZTlKiQvmwzVtu/upAHnlDdkWn5zTiq8HfVTpAVYuFGlyuhlZuxQ5QaQAvZx/o3yloYxIHpxvpgGV8bqe5hOJ1YpNabfLM1rEbVP2IU8PjSFNcg990diMAgmHxKVsV+jQB0msEnhBXeZQ7EC3WWr/Sv4ZCVXc1s5zuk7D8Lsb47pGSWWVs1tldvnmfADztdrjb6UqVM8gmiXOc9aw4ZU1Y61kJssdQOJH3CfnfmIvkjNG7Wy1IOVEG064nC0FZj8pjo=
 notifications:
   slack:
     secure: OYlTXe4vJaT1BnwtajVf7tegcUIv/AU8NtHRduqeRArST6GCg1K+CuH4PW8Tjb6xU2VsHMUed0UMnwuqp7iTwsbMVGj8P2JDDcUPcp8Xr4YGYoqxdNUWKsRuOqFg6i1+t8T1dPiY0CwhiJ+6BHi3jD7iQgEgFL7ixVAZ1E5MfAxq2i2HvAVEsmWn2Yfd98vsGtqTdIkZ8zroU/uuBYwJsW/8ARQK3DH4ze2CL/+FWkQAsKBsMln5PkpFM7+z5CKqy4n04M4nUa1Qk3GQwyV3aqiigso9HjtK5CYOXmAeQ5Q5kDJnGypeF6gSvoqrQVaBfXTGkWl8Iomlxnaq7g55Dtn33SeiQiwTMwoFfrOyIJe4sZuOg+yLInvoqC86CiZOwR2gxQwnD1jmk8sqsara1ndB0yeHZFsjqzKSgZlVPz3SV2p9hiaHzp2HSkmuyh3dWfLvFEk8KVEaWerkG/bkiPBYF4gi++iSyUIo/gce6D5zwiR/C71nmdChrksJrZDqtLXRYzHuh8vE+qmAnaS2pv7/XAxpY0V2qcLuTkbmlghEdRXMvBlO4Vg8pSM3aKELhMXmyTqh8nWvg3LWlH5Ymj0twarWhKCKI0UlUwLGbbPq52w9N7+cx09ANqUZCA8DfK7FSECmphk9BqqbB2u/c5LX93RU5n/vck+ITynxcI0=
+env:
+  global:
+  - secure: WU2Bx/HFyf8fMAKOWPD1crbYtiwA3AkBPHJMub1KOPbpDPVciDdXpiICduUZqUzDbuLrOmxm12FpdA8xD6wdsaomtMjM6ekqqVSM6F8ELC29ME5BI6OrRDzkDrz3Z57cATE8Xp0JPkuQn/BfHGgWjtHvUTgbdlGIY93y33pa8OrCQRNHLwg0I3hCQ9xORXiFI+Cfj3aULBrPp21SHbPTs3ta2Yb7bknybddWo+MLcyyxXlYNbouw5iUGRiXZrF7sW+imBU0oVTLc69miHuaYzi16EIQB/BN6TDg1vmUmcI+HViMJGAj75D4E/bEGE5epk+Tas9gOc/h4PkbCQ0z9psdjc4QTUcFcDchejfvnKGgST8A3icFQQjaxC4yU9UIXnXMqdlhaBaAJsk6FS0HyrLe3W4qQ+Fk3rQkgyZHXFYap9SsH2A1YQcJEhHXqhkVmV8hFrxHG1+BO2f1oC861PL6ATDMeVVTiTDw5CYQ0Fcfj1IcMp2qazVbCiMvCfalDdwC1qgMevSjund5IZGUnSVWt/ZlTMNrzpJgmLUsvQOJVJdjSnLIr1Xk3dwLsNaQm7vEGm2uTnF1YSCZWculiO6aRfLf73FG1TJZUCNXENuODq6OXQ777dRpl7usvIv3V81D51R0hxLvfaYeXUsnUglRaNvNxDQSoNifZbjSstQU=
+  - secure: npPcbPO6f6CjfJ0v8Zy3BE2twMXfRASHLOdA0Z/s+iit5lM+vpPm2+nbsY7cTxm9KEBuC471dMtfrFKiqk3jt1tKXxysh5Vugpg/dGDIjryjJUzc/tGWHiyKrsrzRXLTmHrgICVrMFLUzFK8ONA/uU6ww2r3W73B8/abLAxkgQDxwIXVJ2dTg2P2ypP5rCHUwY5EJ9jjhYu8mYKENs4xAgz1cxVU7W4Zn5d3Qz9XKtqqxCa8iHCy0wmE94PGwG+unfMcA2bHRKSB4wZSrywMq8PBufHd+AlNpB3zjLZ/ecz5CJAOtjf6YwfdHJgv6zfa23XszTQGBft89kt3lwDS03N3rr9NPvaQ+LFXNSruZHPrOGD6pNkopcwQZnid0Qprnqyisc+vwmx6np+dxPXTWPn/HXEjLlKjvStw4jezt5yR8OvWhbjkjSvwjeBGahKBu2QvXHh407SFupRCu3nHyBlySPu6TWBncExa4wRkkh1UVx8BkbHyB9nNcay6CFuXjhBCUE9quXsY6/1vBSLv1TU5nV2hH05jVI1/8q1xnNBubssg3A9Dmsz1yHlO9KZrB4p2l9/JNPsvowNMlckXUQy8w+ffQD6CIijxkGx4/QJKnuu4wPwvwY4na7PUA3SL2JZFzshCiNxiYUMWVtIto06anxNkrB4QD9uFRZd9yeE=

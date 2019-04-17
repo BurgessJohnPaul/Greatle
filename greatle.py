@@ -293,7 +293,7 @@ class GetSentimentIntentHandler(AbstractRequestHandler):
             elif user_sentiment == "SLIGHTLY_HAPPY":
                 speech_text = "You've been slightly happy. That's pretty good."
             elif user_sentiment == "NEUTRAL":
-                speech_text = "You've been feeling neutral. Try "
+                speech_text = "You've been feeling neutral. I have no feelings about this, one way or another."
             elif user_sentiment == "SLIGHTLY_SAD":
                 speech_text = "It seems like you've been a little under the weather. That's okay. Tomorrow's a new day."
             elif user_sentiment == "SAD":

@@ -268,8 +268,9 @@ class HelpIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         speech_text = "I can give you life advice. You can ask me for advice by saying something like 'I want advice" \
-                      " about love'. I can also help you manage your goals. Say 'goal help' to learn more. If you want"\
-                      " to learn about my other features say 'more help'."
+                      " about love'. I can also help you manage your goals. Say 'goal help' to learn more. I can keep " \
+                      "a journal for you. Say 'journal help' to learn about this feature.  To learn about my other " \
+                      "features, say 'more help'."
         card_text = speech_text
         clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
@@ -288,6 +289,21 @@ class GoalHelpIntentHandler(AbstractRequestHandler):
                       " completed my goal of meeting Hillary Clinton'. If you give up on your goal, you can say, " \
                       "'Delete my goal to meet Hillary Clinton'. You can ask me about your goals by saying 'List" \
                       " my goals' or 'List my completed goals.'"
+        card_text = speech_text
+        clearSessionAttributes(handler_input)
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
+
+
+class JournalHelpIntentHandler(AbstractRequestHandler):
+    """Handler for Help Intent."""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("JournalHelpIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        speech_text = "I can help you keep a journal. Say 'Open Journal' to add a new journal entry. You can say 'Read " \
+                      "me my journal' to access your journal entries.'"
         card_text = speech_text
         clearSessionAttributes(handler_input)
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
@@ -518,6 +534,7 @@ sb.add_request_handler(TurnOffDrunkModeHandler())
 sb.add_request_handler(SuicidePreventionIntentHandler())
 
 sb.add_request_handler(GoalHelpIntentHandler())
+sb.add_request_handler(JournalHelpIntentHandler())
 sb.add_request_handler(OtherHelpIntentHandler())
 
 sb.add_request_handler(ThankYouIntentHandler())

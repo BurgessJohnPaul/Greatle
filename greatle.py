@@ -292,7 +292,7 @@ class GetSentimentIntentHandler(AbstractRequestHandler):
             if user_sentiment == "HAPPY":
                 speech_text = "You've been very happy. Keep it up! You're a positive force in the universe!"
             elif user_sentiment == "SLIGHTLY_HAPPY":
-                speech_text = "You've been slightly happy. That's pretty good."
+                speech_text = "You've been quite happy. That's pretty good."
             elif user_sentiment == "NEUTRAL":
                 speech_text = "You've been feeling neutral. I have no feelings about this, one way or another."
             elif user_sentiment == "SLIGHTLY_SAD":
@@ -362,7 +362,6 @@ class GetPersonalAdviceHandler(AbstractRequestHandler):
             card_text = speech_text
 
         return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
-
 
 
 class HelpIntentHandler(AbstractRequestHandler):

@@ -14,7 +14,7 @@ def build_response(handler_input, card_title, card_text, speech_text, img_tuple=
         img = Image('Meme', [ImageInstance(url=img_tuple[1])])
         reddit_text = TextContent(primary_text=PlainText(img_tuple[0]), secondary_text=PlainText(img_tuple[2]))
         directive = RenderTemplateDirective(BodyTemplate2(
-                        back_button=BackButtonBehavior.VISIBLE, background_image=img,
+                        back_button=BackButtonBehavior.VISIBLE,
                         image=img, title=card_title, text_content=reddit_text))
         handler_input.response_builder.speak(speech_text).set_card(card).add_directive(directive).set_should_end_session(end_session)
     else:

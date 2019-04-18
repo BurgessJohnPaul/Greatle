@@ -524,7 +524,7 @@ class LastAuthorIntentHandler(AbstractRequestHandler):
                 handler_input.request_envelope.session.attributes.get(LAST_AUTHOR_SESSION_ATTRIBUTE) is not None:
             author = handler_input.attributes_manager.session_attributes[LAST_AUTHOR_SESSION_ATTRIBUTE]
             speech_text = "The author of the last quote was " + author
-            image_tuple = (author, 'https://avatars.io/twitter/' + "".join(author.split() + '/large'), 'From Twitter')
+            image_tuple = (author, 'https://avatars.io/twitter/' + "".join(author.split()) + '/large', 'From Twitter')
         else:
             speech_text = "There are no recent quotes or the author is unavailable."
             image_tuple = None

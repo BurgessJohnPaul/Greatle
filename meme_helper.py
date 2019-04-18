@@ -12,6 +12,6 @@ def get_memes(sub):
 
 def get_meme(sub='HistoryMemes'):
     memes = get_memes(sub)
-    return memes[random.randint(0, len(memes) - 1)]
+    return memes[random.randint(0, len(memes) - 1)] if len(memes) > 0 else None
 
 # print(get_meme())

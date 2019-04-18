@@ -12,6 +12,7 @@ remember = ["Sure, I'll remember that!", "You got it boss!", "I won't forget tha
 
 
 def create_goal_helper(user_id, slots):
+    is_remembered = False
     if slots is None or "Goal" not in slots or "GoalPhrase" not in slots:
         speech_text = "I have no idea what is going on with these slots today please send help"
     else:
@@ -21,8 +22,8 @@ def create_goal_helper(user_id, slots):
         if goal is None and goal_phrase is None:
             speech_text = "I don't understand your goal. Could you rephrase it?"
         else:
-            speech_text = remember[random.randint(0, len(remember) - 1)]
-
+            speech_text = remember[random.randint(0, len(remember) - 1)] + " Here is an image to help motivate you!"
+            is_remembered = True
             if goal is None:
                 goal_value = goal_phrase
             else:
@@ -33,7 +34,7 @@ def create_goal_helper(user_id, slots):
             else:
                 dynamo_helper.create_goal(user_id, goal_value, strftime(DATE_FORMAT), NO_DATE)
 
-    return speech_text
+    return speech_text, is_remembered
 
 
 def retrieve_goal_helper(user_id):

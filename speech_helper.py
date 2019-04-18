@@ -1,21 +1,21 @@
 from ask_sdk_model import ui
-from ask_sdk_model.interfaces.display import RenderTemplateDirective, BodyTemplate7, BackButtonBehavior, ImageInstance, \
-    Image, ImageSize
+from ask_sdk_model.interfaces.display import RenderTemplateDirective, BodyTemplate2, BackButtonBehavior, ImageInstance, \
+    Image
 from ask_sdk_model.ui import SimpleCard, StandardCard
 import dynamo_helper
 
 
-def build_response(handler_input, card_title, card_text, speech_text, card_image_url=None, end_session=False):
+def build_response(handler_input, card_title, card_text, speech_text, meme_tuple=None, end_session=False):
     if handler_input.attributes_manager.session_attributes["drunk_mode_state"]:
         speech_text = '<prosody rate="slow"><emphasis level="strong">' + speech_text + '</emphasis></prosody>'
 
-    if card_image_url and supports_display(handler_input):
-        card = StandardCard(card_title, card_text, ui.Image(card_image_url, card_image_url))
-        img = Image('Meme', [ImageInstance(url=card_image_url)])
+    if meme_tuple and supports_display(handler_input):
+        card = StandardCard(card_title, card_text, ui.Image(meme_tuple[1], meme_tuple[1]))
+        img = Image('Meme', [ImageInstance(url=meme_tuple[1])])
         directive = RenderTemplateDirective(
-                    BodyTemplate7(
-                        back_button=BackButtonBehavior.HIDDEN,
-                        image=img, title=card_title))
+                    BodyTemplate2(
+                        back_button=BackButtonBehavior.VISIBLE,
+                        image=img, title=meme_tuple[0], text_content='u/' + meme_tuple[2]))
         handler_input.response_builder.speak(speech_text).set_card(card).add_directive(directive).set_should_end_session(end_session)
     else:
         card = SimpleCard(card_title, card_text)

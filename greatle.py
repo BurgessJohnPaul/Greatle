@@ -64,7 +64,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
         handler_input.attributes_manager.session_attributes["drunk_mode_state"] = speech_helper.get_drunk_mode_state(user_id)
 
-        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, card_image_url=get_meme()[1])
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, meme_tuple=get_meme())
 
 
 class UpdateNameIntentHandler(AbstractRequestHandler):
@@ -136,10 +136,11 @@ class CreateGoalIntentHandler(AbstractRequestHandler):
         user_id = handler_input.request_envelope.session.user.user_id[18:]
         slots = handler_input.request_envelope.request.intent.slots
 
-        speech_text = goal_helper.create_goal_helper(user_id, slots)
+        speech_text, is_remembered = goal_helper.create_goal_helper(user_id, slots)
         card_text = speech_text
+        meme = get_meme('GetMotivated') if is_remembered else None
         clearSessionAttributes(handler_input)
-        return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, meme_tuple=meme)
 
 
 class DeleteGoalIntentHandler(AbstractRequestHandler):
@@ -256,7 +257,7 @@ class GetJournalIntentHandler(AbstractRequestHandler):
 
         speech_text = journal_helper.get_random_journal_entry_helper(user_id)
         card_text = speech_text
-        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, False)
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
 
 
 class GetSentimentIntentHandler(AbstractRequestHandler):
@@ -441,7 +442,7 @@ class TurnOnDrunkModeHandler(AbstractRequestHandler):
         card_text = speech_text
         speech_helper.set_drunk_mode(user_id, handler_input, True)
         clearSessionAttributes(handler_input)
-        return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, meme_tuple=get_meme('drunk'))
 
 
 class TurnOffDrunkModeHandler(AbstractRequestHandler):
@@ -476,10 +477,10 @@ class ThankYouIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         thanks = ["You're welcome!", "No problem amigo!", "Aww shucks, you are making me blush.", "No, thank YOU!"]
-        speech_text = thanks[random.randint(0, len(thanks) - 1)]
+        speech_text = thanks[random.randint(0, len(thanks) - 1)] + " Here is a funny picture from Reddit, I hope."
         card_text = speech_text
         clearSessionAttributes(handler_input)
-        return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, meme_tuple=get_meme('funny'))
 
 
 class CancelOrStopIntentHandler(AbstractRequestHandler):

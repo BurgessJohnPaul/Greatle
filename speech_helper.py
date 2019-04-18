@@ -1,6 +1,6 @@
 from ask_sdk_model import ui
 from ask_sdk_model.interfaces.display import RenderTemplateDirective, BodyTemplate2, BackButtonBehavior, ImageInstance, \
-    Image, TextContent
+    Image, TextContent, TextField, PlainText
 from ask_sdk_model.ui import SimpleCard, StandardCard
 import dynamo_helper
 
@@ -12,7 +12,7 @@ def build_response(handler_input, card_title, card_text, speech_text, meme_tuple
     if meme_tuple and supports_display(handler_input):
         card = StandardCard(card_title, card_text, ui.Image(meme_tuple[1], meme_tuple[1]))
         img = Image('Meme', [ImageInstance(url=meme_tuple[1])])
-        reddit_text = TextContent(primary_text=meme_tuple[0], secondary_text='u/' + meme_tuple[2])
+        reddit_text = TextContent(primary_text=PlainText(meme_tuple[0]), secondary_text=PlainText('u/' + meme_tuple[2]))
         directive = RenderTemplateDirective(
                     BodyTemplate2(
                         back_button=BackButtonBehavior.VISIBLE,

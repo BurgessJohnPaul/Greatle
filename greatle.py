@@ -64,7 +64,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
         handler_input.attributes_manager.session_attributes["drunk_mode_state"] = speech_helper.get_drunk_mode_state(user_id)
 
-        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, meme_tuple=get_meme())
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, img_tuple=get_meme())
 
 
 class UpdateNameIntentHandler(AbstractRequestHandler):
@@ -140,7 +140,7 @@ class CreateGoalIntentHandler(AbstractRequestHandler):
         card_text = speech_text
         meme = get_meme('GetMotivated') if is_remembered else None
         clearSessionAttributes(handler_input)
-        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, meme_tuple=meme)
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, img_tuple=meme)
 
 
 class DeleteGoalIntentHandler(AbstractRequestHandler):
@@ -441,7 +441,7 @@ class TurnOnDrunkModeHandler(AbstractRequestHandler):
         card_text = speech_text
         speech_helper.set_drunk_mode(user_id, handler_input, True)
         clearSessionAttributes(handler_input)
-        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, meme_tuple=get_meme('drunk'))
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, img_tuple=get_meme('drunk'))
 
 
 class TurnOffDrunkModeHandler(AbstractRequestHandler):
@@ -479,7 +479,7 @@ class ThankYouIntentHandler(AbstractRequestHandler):
         speech_text = thanks[random.randint(0, len(thanks) - 1)] + " Here is a funny picture from Reddit, I hope."
         card_text = speech_text
         clearSessionAttributes(handler_input)
-        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, meme_tuple=get_meme('funny'))
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, img_tuple=get_meme('funny'))
 
 
 class CancelOrStopIntentHandler(AbstractRequestHandler):
@@ -522,13 +522,15 @@ class LastAuthorIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         if handler_input.request_envelope.session.attributes is not None and \
                 handler_input.request_envelope.session.attributes.get(LAST_AUTHOR_SESSION_ATTRIBUTE) is not None:
-            speech_text = "The author of the last quote was "\
-                          + handler_input.attributes_manager.session_attributes[LAST_AUTHOR_SESSION_ATTRIBUTE]
+            author = handler_input.attributes_manager.session_attributes[LAST_AUTHOR_SESSION_ATTRIBUTE]
+            speech_text = "The author of the last quote was " + author
+            image_tuple = (author, 'https://avatars.io/twitter/' + "".join(author.split() + '/large'), 'From Twitter')
         else:
             speech_text = "There are no recent quotes or the author is unavailable."
+            image_tuple = None
         card_text = speech_text
         clearSessionAttributes(handler_input)
-        return speech_helper.build_response(handler_input, card_title, card_text, speech_text)
+        return speech_helper.build_response(handler_input, card_title, card_text, speech_text, img_tuple=image_tuple)
 
 def clearSessionAttributes(handler_input, deleteGoalToDelete=True, deleteQueryID=True):
     if handler_input.request_envelope.session.attributes is not None:
